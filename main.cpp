@@ -16,7 +16,7 @@ int main() {
     
     return 0;
 }
-void homePage() {
+void displayFirstPage() {
     int choice;
 
     cout << "\n=== Welcome to DOC-SPOT ===\n";
@@ -38,7 +38,7 @@ void homePage() {
         exit(0);
     default:
         cout << "Invalid choice. Please try again.\n";
-        
+        displayFirstPage();
     }
 }
 // Login Function
