@@ -10,10 +10,10 @@ void myProfile();
 void myDocs();
 void myWallet();
 void discussionForum();
-void homePage();
+void displayFirstPage();
 
 int main() {
-    
+    displayFirstPage();
     return 0;
 }
 void displayFirstPage() {
