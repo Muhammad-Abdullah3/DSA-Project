@@ -80,7 +80,6 @@ void signUp() {
         cout << "Passwords do not match. Try again.\n";
     }
 }
-
 // Home Page
 void displayHomePage() {
     int choice;
