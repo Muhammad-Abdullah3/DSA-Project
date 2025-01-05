@@ -146,6 +146,11 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
     cin.ignore();
     cout << "Enter name: ";
     getline(cin, name);
+    cout << "\nSelect a University:\n";
+    uni.displayUniversities();
+    int uni_choice;
+    cout << "Enter your choice: ";
+    cin >> uni_choice;
     cout << "Enter email: ";
     getline(cin, email);
     cout << "Enter age: ";

@@ -61,30 +61,28 @@ int UserProfile::user_count = 1; // Initialize static member
 // Class for universities
 class Universities {
 public:
-    vector<string> uni_names;
-    vector<string> uni_addresses;
+    vector<string> uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT"};
+    vector<string> domains = {"riphah", "fast", "nust","au","uet","umt"};
+    vector<vector<string>> campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
+    
 
-    Universities() {
-        // Predefined list of universities
-        uni_names = {"University A", "University B", "University C"};
-        uni_addresses = {"Campus A (Pakistan)", "Campus B (Pakistan)", "Campus C (Pakistan)"};
-    }
-
-    void displayUniversities() const {
+    void displayUniversities() {
         cout << "Available Universities:\n";
-        for (size_t i = 0; i < uni_names.size(); ++i) {
-            cout << i + 1 << ". " << uni_names[i] << " - " << uni_addresses[i] << endl;
+        for(int i=0;i<uni_names.size();i++) {
+            cout<<i+1<<". "<<uni_names.at(i)<<endl;
         }
     }
-
-    bool selectUniversity(int index, string &selected_name, string &selected_address) const {
-        if (index < 1 || index > (int)uni_names.size()) {
-            cout << "Invalid selection.\n";
-            return false;
+    int selectCampus(int index)  {
+        switch (index)
+        {
+        case 1:
+            
+            break;
+        
+        default:
+            break;
         }
-        selected_name = uni_names[index - 1];
-        selected_address = uni_addresses[index - 1];
-        return true;
+        
     }
 };
 
@@ -150,9 +148,24 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
     string name, email, address, department, program, university_name, university_address;
     int age, semester;
 
-    cin.ignore(); // Clear input buffer
+    cin.ignore(); 
     cout << "Enter name: ";
     getline(cin, name);
+
+    cout << "Select University"<<endl;
+    uni.displayUniversities();
+    int choice=0;
+    bool select_university = false;
+    do{
+        
+        cout<<"Enter a digit between 1 and "<<uni.uni_names.size()<<" :";
+        if(choice>1&&choice<=uni.uni_names.size()) {
+            select_university = true;
+        }
+        else {
+            cout<<"University Not registered with Doc-Spot. Please try again.";
+        }
+    }while(!(select_university));
     cout << "Enter email: ";
     getline(cin, email);
     cout << "Enter age: ";
@@ -174,11 +187,6 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
     cout << "Enter your choice: ";
     cin >> uni_choice;
 
-    if (uni.selectUniversity(uni_choice, university_name, university_address)) {
-        signup(userList, name, email, age, address, department, program, semester, university_name, university_address);
-    } else {
-        cout << "Failed to add user due to invalid university selection.\n";
-    }
 }
 
 int main() {
