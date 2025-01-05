@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <mysql/jdbc.h> // MySQL Connector/C++ header
+#include<mysql/jdbc.h> // MSQL Connector/C++ header
 #include <conio.h>
 using namespace std;
 
@@ -103,7 +103,7 @@ public:
 // Function to insert data into MySQL database
 void insertIntoDatabase(const UserProfile& user) {
     try {
-        // Establish MySQL connection
+        // Establish MySQL connection?
         sql::Driver* driver = get_driver_instance();
         unique_ptr<sql::Connection> conn(driver->connect("tcp://127.0.0.1:3306", "root", "password"));
         conn->setSchema("UserDB");

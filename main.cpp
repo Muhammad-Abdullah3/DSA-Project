@@ -2,22 +2,17 @@
 #include <string>
 #include<vector>
 #include<conio.h>
+#include<mysql/jdbc.h>
+#include<regex>
 using namespace std;
 
-// Function declarations
-void displayHomePage();
-void login();
-void signUp();
-void myProfile();
-void myDocs();
-void myWallet();
-void discussionForum();
-void displayFirstPage();
-void aboutUs();
-bool validateEmail(string email,int uni_index);
+
+
+
 class UserProfile {
 private:
     int user_id;
+    string password;
     string name;
     string email;
     int age;
@@ -27,6 +22,7 @@ private:
     int semester;
     string university_name;
     string university_address;
+    bool profileComplete = false;
 
 public:
     static int user_count;
@@ -34,10 +30,8 @@ public:
     UserProfile() : user_id(user_count++) {} // Constructor initializes unique user ID
 
     // Parameterized constructor for easy initialization
-    UserProfile(string name, string email, int age, string address, string department, string program, int semester,
-                string university_name, string university_address)
-        : user_id(user_count++), name(name), email(email), age(age), address(address), department(department),
-          program(program), semester(semester), university_name(university_name), university_address(university_address) {}
+    UserProfile(string na, string em, string pass,string uni_name)
+        : user_id(user_count++), name(na), email(em),password(pass),university_name(uni_name) {}
 
     // Getter functions
     int get_user_id() const { return user_id; }
@@ -71,10 +65,9 @@ int UserProfile::user_count = 1; // Initialize static member
 // Class for universities
 class Universities {
 public:
-    vector<string> uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT"};
-    vector<string> domains = {"riphah", "fast", "nust","au","uet","umt"};
-    vector<vector<string>> campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
-    
+    static vector<string> uni_names;
+    static vector<string> domains ;
+    static vector<vector<string>> campus;
 
     void displayUniversities() {
         cout << "Available Universities:\n";
@@ -83,19 +76,11 @@ public:
         }
         cout<<"Enter 0 to go back to homepage"<<endl;
     }
-    int selectCampus(int index)  {
-        switch (index)
-        {
-        case 1:
-            
-            break;
-        
-        default:
-            break;
-        }
-        
-    }
 };
+
+vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT"};
+vector<string> Universities::domains = {"riphah", "fast", "nust","au","uet","umt"};
+vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
 
 // Doubly linked list class
 class DoublyLinkedList {
@@ -144,20 +129,28 @@ public:
     }
 };
 
-// Signup function (handles profile creation)
-void signup(DoublyLinkedList& userList, const string& name, const string& email, int age, const string& address,
-            const string& department, const string& program, int semester, const string& university_name,
-            const string& university_address) {
-    UserProfile user(name, email, age, address, department, program, semester, university_name, university_address);
-    userList.addUser(user);
-    cout << "User added successfully.\n";
+// Function declarations
+void signupConsole(DoublyLinkedList& userList);
+void displayHomePage(DoublyLinkedList& userList);
+void login(DoublyLinkedList& userList);
+void myProfile();
+void myDocs();
+void myWallet();
+void discussionForum();
+void displayFirstPage(DoublyLinkedList& usrList);
+void aboutUs();
+bool validateEmail(string email,int uni_index);
+void signUp(DoublyLinkedList& userList, const string& name, string& email, const string& password,string& uni_name);
+int main() {
+    DoublyLinkedList userList;
+    displayFirstPage(userList);
+    return 0;
 }
 
-// Signup Console function (temporary local variables)
-void signupConsole(DoublyLinkedList& userList, Universities& uni) {
+void signupConsole(DoublyLinkedList& userList) {
     system("cls");
-    string name, email, address, department, program, university_name, university_address;
-    int age, semester;
+    Universities uni;
+    string name, email, password,confirmPass;
 
     cin.ignore(); 
     cout << "Enter name: ";
@@ -168,8 +161,9 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
     int choice=0;
     bool select_university = false;
     do{ 
-        cout<<"Enter a digit between 1 and "<<uni.uni_names.size()<<" :";
-        if(choice>=0&&choice<=uni.uni_names.size()) {
+        cout<<"Enter a digit between 1 and "<<Universities::uni_names.size()<<" :";
+        cin>>choice;
+        if(choice>=0&&choice<=Universities::uni_names.size()) {
             select_university = true;
         }
         else {
@@ -177,20 +171,33 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
         }
     }while(!(select_university));
     if(choice==0) {
-        displayFirstPage();
+        displayFirstPage(userList);
     }
-    bool validEmail=false;
     do{
+        cin.ignore();
         cout << "Enter email: ";
         getline(cin, email);
-    }while(!(validEmail));
+        if (validateEmail(email, choice)) {
+            break;
+        }
+        else {
+            cout << "You should only use University Email. Please try again.\n" << endl;
+        }
+    } while (true);
+    cin.ignore();
+    cout << "Enter Passowrd: ";
+    getline(cin, password);
+    cout << "Confirm Password: ";
+    getline(cin, confirmPass);
+    if (password == confirmPass) {
+        cout << "Successful Account Creation";
+        system("cls");
+        displayHomePage(userList);
+    }
+    signUp(userList, name, email, password, Universities::uni_names.at(choice - 1));
 }
 
-int main() {
-    displayFirstPage();
-    return 0;
-}
-void displayFirstPage() {
+void displayFirstPage(DoublyLinkedList& usrList) {
     int choice;
 
     cout << "\n=== Welcome to DOC-SPOT ===\n";
@@ -202,10 +209,10 @@ void displayFirstPage() {
     cin >> choice;
     switch (choice) {
     case 1:
-        login();
+        login(usrList);
         break;
     case 2:
-        signUp();
+        signupConsole(usrList);
         break;
     case 3:
         aboutUs();
@@ -215,11 +222,11 @@ void displayFirstPage() {
         exit(0);
     default:
         cout << "Invalid choice. Please try again.\n";
-        displayFirstPage();
+        displayFirstPage(usrList);
     }
 }
-// Login Function
-void login() {
+
+void login(DoublyLinkedList& userList) {
     string email, password;
 
     cout << "\n--- Login ---\n";
@@ -228,39 +235,13 @@ void login() {
     cout << "Enter Password: ";
     cin >> password;
 
-    // Simulating successful login for demo purposes
     cout << "Login successful!\n";
-    displayHomePage();
+    displayHomePage(userList);
 }
 
-// Sign Up Function
-void signUp() {
-    string firstName, lastName, university, email, password, confirmPassword;
-
-    cout << "\n--- Sign Up ---\n";
-    cout << "First Name: ";
-    cin >> firstName;
-    cout << "Last Name: ";
-    cin >> lastName;
-    cout << "University: ";
-    cin >> university;
-    cout << "University Email: ";
-    cin >> email;
-    cout << "Password: ";
-    cin >> password;
-    cout << "Confirm Password: ";
-    cin >> confirmPassword;
-
-    if (password == confirmPassword) {
-        cout << "Account created successfully!\n";
-    } else {
-        cout << "Passwords do not match. Try again.\n";
-    }
-}
-// Home Page
-void displayHomePage() {
+void displayHomePage(DoublyLinkedList& userList) {
     int choice;
-
+    system("cls");
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
@@ -286,6 +267,9 @@ void displayHomePage() {
             break;
         case 5:
             cout << "Logging out...\n";
+            cout<<"...Sucessfully Logged Out...\n\n\n\n\n";
+            system("cls");
+            displayFirstPage(userList);
             return;
         default:
             cout << "Invalid choice. Please try again.\n";
@@ -293,7 +277,6 @@ void displayHomePage() {
     }
 }
 
-// My Profile Function
 void myProfile() {
     cout << "\n--- My Profile ---\n";
     cout << "Name: John Doe\n";
@@ -306,7 +289,6 @@ void myProfile() {
     cout << "Role: Student\n";
 }
 
-// My Docs Function
 void myDocs() {
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
@@ -331,7 +313,6 @@ void myDocs() {
     }
 }
 
-// My Wallet Function
 void myWallet() {
     cout << "\n--- My Wallet ---\n";
     cout << "1. Current Balance: $100\n";
@@ -360,7 +341,6 @@ void myWallet() {
     }
 }
 
-// Discussion Forum Function
 void discussionForum() {
     cout << "\n--- Discussion Forum ---\n";
     cout << "Feature to start and join discussions will be here.\n";
@@ -368,5 +348,15 @@ void discussionForum() {
 
 void aboutUs() {
     cout << "\n--- About Us ---\n";
+}
 
+bool validateEmail(string email,int uni_index){
+    string pattern = R"(^[\w\.-]+@students\.)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
+    regex emailRegex(pattern);
+    return regex_match(email, emailRegex);
+}
+
+void signUp(DoublyLinkedList& userList, const string& name,  string& email, const string& password,string& uni_name) {
+    UserProfile user(name, email, password, uni_name);
+    userList.addUser(user);
 }
