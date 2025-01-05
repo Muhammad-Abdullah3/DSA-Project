@@ -71,6 +71,7 @@ public:
         for(int i=0;i<uni_names.size();i++) {
             cout<<i+1<<". "<<uni_names.at(i)<<endl;
         }
+        cout<<"Enter 0 to go back to homepage"<<endl;
     }
     int selectCampus(int index)  {
         switch (index)
@@ -104,7 +105,7 @@ public:
     DoublyLinkedList() : head(nullptr), tail(nullptr) {}
 
     // Add user to the end of the list
-    void addUser(const UserProfile& user) {
+    void addUser(UserProfile& user) {
         Node* newNode = new Node(user);
         if (!head) {
             head = tail = newNode;
@@ -116,7 +117,7 @@ public:
     }
 
     // Display all users
-    void displayUsers() const {
+    void displayUsers() {
         Node* current = head;
         if (!current) {
             cout << "No users in the list.\n";
@@ -156,16 +157,18 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
     uni.displayUniversities();
     int choice=0;
     bool select_university = false;
-    do{
-        
+    do{ 
         cout<<"Enter a digit between 1 and "<<uni.uni_names.size()<<" :";
-        if(choice>1&&choice<=uni.uni_names.size()) {
+        if(choice>=0&&choice<=uni.uni_names.size()) {
             select_university = true;
         }
         else {
             cout<<"University Not registered with Doc-Spot. Please try again.";
         }
     }while(!(select_university));
+    if(choice==0) {
+        displayFirstPage();
+    }
     cout << "Enter email: ";
     getline(cin, email);
     cout << "Enter age: ";
