@@ -58,7 +58,7 @@ public:
     }
 };
 
-int UserProfile::user_count = 1; // Initialize static member
+int UserProfile::user_count = 0; // Initialize static member
 
 // Class for universities
 class Universities {
@@ -80,21 +80,21 @@ vector<string> Universities::uni_names = {"Riphah International University", "Fa
 vector<string> Universities::domains = {"riphah", "fast", "nust","au","uet","umt"};
 vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
 
-// Doubly linked list class
-class DoublyLinkedList {
-private:
-    struct Node {
+struct Node {
         UserProfile data;//data is an object of userProfile class. jitna bhi data hoga user ka sign up kr k wo idhr dll mein store hoga.
         Node* prev;
         Node* next;
 
         Node( UserProfile& user) : data(user), prev(nullptr), next(nullptr) {}
-    };
-
+};
+// Doubly linked list class
+class DoublyLinkedList {
+    
+public:
     Node* head;
     Node* tail;
 
-public:
+
     DoublyLinkedList() : head(nullptr), tail(nullptr) {}
 
     // Add user to the end of the list
@@ -138,6 +138,7 @@ void discussionForum();
 void displayFirstPage(DoublyLinkedList& usrList);
 void aboutUs();
 bool validateEmail(string email,int uni_index);
+bool validateEmailLogin(string email);
 void signUp(DoublyLinkedList& userList, const string& name, string& email, const string& password,string& uni_name);
 int main() {
     DoublyLinkedList userList;
@@ -225,12 +226,12 @@ void displayFirstPage(DoublyLinkedList& usrList) {
 }
 
 void login(DoublyLinkedList& userList) {
-    string email, pass;
+    string em, pass;
 
     cout << "\n--- Login ---\n";
     cout << "Enter University Email: ";
-    getline(cin,email);
-    if(!(validateEmailLogin)) {
+    getline(cin,em);
+    if(!(validateEmailLogin(em))) {
         cout<<"Please enter your official university Email.Try Again";
         login(userList);
     }
@@ -239,8 +240,8 @@ void login(DoublyLinkedList& userList) {
     bool checkEmail = false;
     Node* temp = userList.head;
     while (temp!=nullptr) {
-        if (temp->data->email == email) {
-            isUserPresent =true;
+        if (temp->data->email == em) {
+            checkEmail =true;
             break;
         }
         temp = temp->next;
@@ -364,7 +365,7 @@ void discussionForum() {
 }
 
 void aboutUs(){
-cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners."
+cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners.";
 }
 
 bool validateEmail(string email,int uni_index){
