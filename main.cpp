@@ -231,12 +231,14 @@ void login(DoublyLinkedList& userList) {
 
     cout << "\n--- Login ---\n";
     cout << "Enter University Email: ";
+     cin.ignore();
     getline(cin,em);
     if(!(validateEmailLogin(em))) {
         cout<<"Please enter your official university Email.Try Again";
         login(userList);
     }
     cout << "Enter Password: ";
+    cin.ignore();
      getline(cin,pass); 
     bool checkEmail = false;
     Node* temp = userList.head;
