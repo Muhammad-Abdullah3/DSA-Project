@@ -42,7 +42,7 @@ public:
     int get_semester() const { return semester; }
     string get_university_name() const { return university_name; }
     string get_university_address() const { return university_address; }
-
+    string get_password() const { return password; }
     // Display user profile
     void displayProfile() const {
         cout << "User ID: " << user_id << endl;
@@ -91,6 +91,7 @@ struct Node {
 class DoublyLinkedList {
     
 public:
+    
     Node* head;
     Node* tail;
 
@@ -240,13 +241,13 @@ void login(DoublyLinkedList& userList) {
     bool checkEmail = false;
     Node* temp = userList.head;
     while (temp!=nullptr) {
-        if (temp->data->email == em) {
+        if (temp->data.get_email() == em) {
             checkEmail =true;
             break;
         }
         temp = temp->next;
     }
-    if(temp->data->password==pass && checkEmail){    
+    if(temp->data.get_password()==pass && checkEmail){    
     cout << "Login successful!\n";
     displayHomePage(userList); 
     }
