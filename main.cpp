@@ -84,7 +84,6 @@ struct Node {
         UserProfile data;//data is an object of userProfile class. jitna bhi data hoga user ka sign up kr k wo idhr dll mein store hoga.
         Node* prev;
         Node* next;
-
         Node( UserProfile& user) : data(user), prev(nullptr), next(nullptr) {}
 };
 // Doubly linked list class
@@ -140,19 +139,27 @@ void displayFirstPage(DoublyLinkedList& usrList);
 void aboutUs();
 bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
-void signUp(DoublyLinkedList& userList, const string& name, string& email, const string& password,string& uni_name);
+void signUp(DoublyLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
+
+
+
+
 int main() {
     DoublyLinkedList userList;
     displayFirstPage(userList);
     return 0;
 }
 
+
+
+
+
+
 void signupConsole(DoublyLinkedList& userList) {
     system("cls");
     Universities uni;
     string name, email, password,confirmPass;
-
-    cin.ignore(); 
+    cin.ignore();
     cout << "Enter name: ";
     getline(cin, name);
 
@@ -174,7 +181,7 @@ void signupConsole(DoublyLinkedList& userList) {
         displayFirstPage(userList);
     }
     do{
-        cin.ignore();
+        
         cout << "Enter email: ";
         getline(cin, email);
         if (validateEmail(email, choice)) {
@@ -182,8 +189,9 @@ void signupConsole(DoublyLinkedList& userList) {
         }
         else {
             cout << "You should only use University Email. Please try again.\n" << endl;
+
         }
-    } while (true);
+    } while (!(validateEmail(email, choice)));
     cin.ignore();
     cout << "Enter Passowrd: ";
     getline(cin, password);
@@ -251,13 +259,13 @@ void login(DoublyLinkedList& userList) {
     }
     if(temp->data.get_password()==pass && checkEmail){    
     cout << "Login successful!\n";
+    currentUser= temp->data.get_user_id();
     displayHomePage(userList); 
     }
     else{
         cout<<"Incorrect Email OR Password."<<endl;
         login(userList);
     }
-
 }
 
 void displayHomePage(DoublyLinkedList& userList) {
@@ -377,8 +385,9 @@ bool validateEmail(string email,int uni_index){
     return regex_match(email, emailRegex);
 }
 
-void signUp(DoublyLinkedList& userList, const string& name,  string& email, const string& password,string& uni_name) {
+void signUp(DoublyLinkedList& userList,  string& name,  string& email,  string& password,string& uni_name) {
     UserProfile user(name, email, password, uni_name);
+    currentUser= user.get_user_id();
     userList.addUser(user);
 }
 
@@ -393,6 +402,5 @@ bool validateEmailLogin(string email) {
             return true; // Valid email found
         }
     }
-
     return false; // No match found
 }
