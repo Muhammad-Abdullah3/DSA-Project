@@ -1,14 +1,10 @@
-#include <iostream>
-#include <string>
+#include<iostream>
+#include<string>
 #include<vector>
 #include<conio.h>
-#include<mysql/jdbc.h>
 #include<regex>
 using namespace std;
-
-
-
-
+static int currentUser=0;
 class UserProfile {
 private:
     int user_id;
@@ -26,10 +22,12 @@ private:
 
 public:
     static int user_count;
+//Default Constructor
+    UserProfile()  {
+                user_id = user_count++;
+    } // Constructor initializes unique user ID
 
-    UserProfile() : user_id(user_count++) {} // Constructor initializes unique user ID
-
-    // Parameterized constructor for easy initialization
+    // Parameterized constructor for easy initialization and for sign-up
     UserProfile(string na, string em, string pass,string uni_name)
         : user_id(user_count++), name(na), email(em),password(pass),university_name(uni_name) {}
 
@@ -86,11 +84,11 @@ vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore
 class DoublyLinkedList {
 private:
     struct Node {
-        UserProfile data;
+        UserProfile data;//data is an object of userProfile class. jitna bhi data hoga user ka sign up kr k wo idhr dll mein store hoga.
         Node* prev;
         Node* next;
 
-        Node(const UserProfile& user) : data(user), prev(nullptr), next(nullptr) {}
+        Node( UserProfile& user) : data(user), prev(nullptr), next(nullptr) {}
     };
 
     Node* head;
@@ -227,16 +225,35 @@ void displayFirstPage(DoublyLinkedList& usrList) {
 }
 
 void login(DoublyLinkedList& userList) {
-    string email, password;
+    string email, pass;
 
     cout << "\n--- Login ---\n";
     cout << "Enter University Email: ";
-    cin >> email;
+    getline(cin,email);
+    if(!(validateEmailLogin)) {
+        cout<<"Please enter your official university Email.Try Again";
+        login(userList);
+    }
     cout << "Enter Password: ";
-    cin >> password;
-
+     getline(cin,pass); 
+    bool checkEmail = false;
+    Node* temp = userList.head;
+    while (temp!=nullptr) {
+        if (temp->data->email == email) {
+            isUserPresent =true;
+            break;
+        }
+        temp = temp->next;
+    }
+    if(temp->data->password==pass && checkEmail){    
     cout << "Login successful!\n";
-    displayHomePage(userList);
+    displayHomePage(userList); 
+    }
+    else{
+        cout<<"Incorrect Email OR Password."<<endl;
+        login(userList);
+    }
+
 }
 
 void displayHomePage(DoublyLinkedList& userList) {
@@ -346,8 +363,8 @@ void discussionForum() {
     cout << "Feature to start and join discussions will be here.\n";
 }
 
-void aboutUs() {
-    cout << "\n--- About Us ---\n";
+void aboutUs(){
+cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners."
 }
 
 bool validateEmail(string email,int uni_index){
@@ -359,4 +376,19 @@ bool validateEmail(string email,int uni_index){
 void signUp(DoublyLinkedList& userList, const string& name,  string& email, const string& password,string& uni_name) {
     UserProfile user(name, email, password, uni_name);
     userList.addUser(user);
+}
+
+bool validateEmailLogin(string email) {
+    string basePattern = R"(^[\w\.-]+@students\.)";
+    string suffix = R"(\.edu\.pk$)";
+    
+    for (auto& domain : Universities::domains) {
+        string fullPattern = basePattern + domain + suffix;
+        regex emailRegex(fullPattern);
+        if (regex_match(email, emailRegex)) {
+            return true; // Valid email found
+        }
+    }
+
+    return false; // No match found
 }
