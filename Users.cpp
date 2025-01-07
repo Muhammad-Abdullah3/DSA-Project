@@ -166,9 +166,6 @@ void signupConsole(DoublyLinkedList& userList, Universities& uni) {
             cout<<"University Not registered with Doc-Spot. Please try again.";
         }
     }while(!(select_university));
-    if(choice==0) {
-        displayFirstPage();
-    }
     cout << "Enter email: ";
     getline(cin, email);
     cout << "Enter age: ";
@@ -198,6 +195,7 @@ int main() {
 
     // Call the signupConsole function
     signupConsole(userList, uni);
-
+    userList.displayUsers();
+    getch();
     return 0;
 }
