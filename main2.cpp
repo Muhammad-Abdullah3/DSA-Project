@@ -170,4 +170,33 @@ class UserProfileLinkedList {
     public:
     UserNode* head;
     UserNode* tail;
+    UserProfileLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+    // Destructor
+    ~UserProfileLinkedList() {
+        UserNode* current = head;
+        while (current) {
+            UserNode* nextNode = current->next;
+            delete current;
+            current = nextNode;
+        }
+    }
+    // Adding a user at the end of the Linked List
+    void addUserAtEnd(UserProfile& user) {
+        UserNode* newNode = new UserNode(user);
+        if (head == nullptr) {
+            head = tail = newNode;
+        }
+        else {
+            UserNode* current = head;
+            while(current->next!=nullptr) {
+                current = current->next;
+            }
+            current->next = newNode;
+            newNode->prev = current;
+            tail = newNode;
+        }
+    } 
 };
