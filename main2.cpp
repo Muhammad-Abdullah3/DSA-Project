@@ -20,32 +20,32 @@ class UserProfile{
     //for auto incrementation of user_id we use static variable of user count
     static int user_count;
     // Default Constructor
-    UserProfile(string null_string=NULL) {
+    UserProfile() {
         user_id = user_count+1;// user id auto incrementing for each new user
-        password=null_string;
-        user_name=null_string;
-        email=null_string;
-        dob=null_string;
-        address=null_string;
-        department=null_string;
-        program=null_string;
-        uni_name=null_string;
-        campus_location=null_string;
+        password="NULL";
+        user_name="NULL";
+        email="NULL";
+        dob="NULL";
+        address="NULL";
+        department="NULL";
+        program="NULL";
+        uni_name="NULL";
+        campus_location="NULL";
         int semester = -1;
         is_profile_complete = false;
     }
     // Constructor for SignUp function
-    UserProfile(string name,string pass,string email,string uni,string null_string=NULL) {
+    UserProfile(string name,string pass,string email,string uni) {
         user_id = user_count+1;// user id auto incrementing for each new user
         password=pass;
         user_name=name;
         this->email=email;
-        dob=null_string;
-        address=null_string;
-        department=null_string;
-        program=null_string;
+        dob="NULL";
+        address="NULL";
+        department="NULL";
+        program="NULL";
         uni_name=uni;
-        campus_location=null_string;
+        campus_location="NULL";
         int semester = -1;
         is_profile_complete = false;
     }
@@ -74,8 +74,8 @@ class UserProfile{
     void setCampus(string camp) {
         campus_location = camp;
     }
-    void setProfileCompleteCheck(string null_string=NULL) {
-        is_profile_complete = !(password==null_string||user_name==null_string||password==null_string||email==null_string||dob==null_string||department==null_string||program==null_string||uni_name==null_string||campus_location==null_string);
+    void setProfileCompleteCheck() {
+        is_profile_complete = !(password=="NULL"||user_name=="NULL"||password=="NULL"||email=="NULL"||dob=="NULL"||department=="NULL"||program=="NULL"||uni_name=="NULL"||campus_location=="NULL");
     }
 
     //Getter Functions
@@ -199,4 +199,11 @@ class UserProfileLinkedList {
             tail = newNode;
         }
     } 
+    
 };
+
+int main() {
+    UserProfileLinkedList userProfileLinkedList;
+
+    return 0;
+}
