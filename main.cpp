@@ -180,7 +180,7 @@ void signupConsole(DoublyLinkedList& userList) {
             select_university = true;
         }
         else {
-            cout<<"University Not registered with Doc-Spot. Please try again.";
+            cout<<"University Not registered with Doc-Spot. Please try again."<<endl;
         }
     }while(!(select_university));
     if(choice==0) {
@@ -190,11 +190,12 @@ void signupConsole(DoublyLinkedList& userList) {
         cin.ignore();
         cout << "Enter email: ";
         getline(cin, email);
+        cout<<"";
         if (validateEmail(email, choice)) {
             break;
         }
         else {
-            cout << "You should only use University Email. Please try again.\n" << endl;
+            cout << "You should only use University Email. Please try again." << endl;
 
         }
     } while (!(validateEmail(email, choice)));
