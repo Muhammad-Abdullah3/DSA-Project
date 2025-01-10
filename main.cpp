@@ -4,66 +4,135 @@
 #include<conio.h>
 #include<regex>
 using namespace std;
-static int currentUser=0;
-class UserProfile {
-private:
+
+static int current_user =1;// for storing the id of the current user present
+
+// class for storing the user's profile info or we can say student's info
+class UserProfile{
+    private:
+    // for storing user id
     int user_id;
-    string password;
-    string name;
-    string email;
-    int age;
-    string address;
-    string department;
-    string program;
+    
+    string password, user_name, email, dob, address,department,program,uni_name,campus_location;
     int semester;
-    string university_name;
-    string university_address;
-    bool profileComplete = false;
-
-public:
+    bool is_profile_complete;
+    public:
+    //for auto incrementation of user_id we use static variable of user count
     static int user_count;
-//Default Constructor
-    UserProfile()  {
-                user_id = user_count++;
-    } // Constructor initializes unique user ID
+    // Default Constructor
+    UserProfile() {
+        user_id = UserProfile::user_count;// user id auto incrementing for each new user
+        password="NULL";
+        user_name="NULL";
+        email="NULL";
+        dob="NULL";
+        address="NULL";
+        department="NULL";
+        program="NULL";
+        uni_name="NULL";
+        campus_location="NULL";
+        int semester = -1;
+        is_profile_complete = false;
+    }
+    // Constructor for SignUp function
+    UserProfile(string name,string pass,string email,string uni) {
+        user_id = UserProfile::user_count;// user
+        password=pass;
+        user_name=name;
+        this->email=email;
+        dob="NULL";
+        address="NULL";
+        department="NULL";
+        program="NULL";
+        uni_name=uni;
+        campus_location="NULL";
+        int semester = -1;
+        is_profile_complete = false;
+    }
+    // setter functions
+    void setPassword(string pass) {
+        password = pass;
+    }
+    void setUserName(string name) {
+        user_name = name;
+    }
+    void setEmail(string email) {
+        this->email = email;
+    }
+    void setDOB(string dob) {
+        this->dob = dob;
+    }
+    void setDepartment(string depart) {
+        department = depart;
+    }
+    void setProgram(string prog) {
+        program = prog;
+    }
+    void setUniName(string uni) {
+        uni_name = uni;
+    }
+    void setCampus(string camp) {
+        campus_location = camp;
+    }
+    void setProfileCompleteCheck() {
+        is_profile_complete = !(password=="NULL"||user_name=="NULL"||password=="NULL"||email=="NULL"||dob=="NULL"||department=="NULL"||program=="NULL"||uni_name=="NULL"||campus_location=="NULL");
+    }
 
-    // Parameterized constructor for easy initialization and for sign-up
-    UserProfile(string na, string em, string pass,string uni_name)
-        : user_id(user_count++), name(na), email(em),password(pass),university_name(uni_name) {}
-
-    // Getter functions
-    int get_user_id() const { return user_id; }
-    string get_name() const { return name; }
-    string get_email() const { return email; }
-    int get_age() const { return age; }
-    string get_address() const { return address; }
-    string get_department() const { return department; }
-    string get_program() const { return program; }
-    int get_semester() const { return semester; }
-    string get_university_name() const { return university_name; }
-    string get_university_address() const { return university_address; }
-    string get_password() const { return password; }
-    // Display user profile
+    //Getter Functions
+    int getUserID() {
+        return user_id;
+    }
+    string getUserName() {
+        return user_name;
+    }
+    string getPassword() {
+        return password;
+    }
+    string getEmail() {
+        return email;
+    }
+    string getDOB() {
+        return dob;
+    }
+    string getDepartment() {
+        return department;
+    }
+    string getProgram() {
+        return program;
+    }
+    string getUniName() {
+        return uni_name;
+    }
+    string getCampusLocation() {
+        return campus_location;
+    }
+    int getSemester() {
+        return semester;
+    }
+    bool getProfileComleteCheck() {
+        return is_profile_complete;
+    }
+    // function to display the profile
     void displayProfile() {
         system("cls");
         cout<<"---------------------------------------------------------\n";
         cout<<"|                     My Profile                        |\n";
         cout<<"---------------------------------------------------------\n";
-        cout << "Name: " << name << endl;
+        cout << "Name: " << user_name << endl;
         cout << "Email: " << email << endl;
-        cout << "Age: " << age << endl;
+        cout << "Date of Birth: " << dob << endl;
         cout << "Address: " << address << endl;
+        cout << "University Name: " << uni_name << endl;
+        cout << "University Campus: " << campus_location << endl;
         cout << "Department: " << department << endl;
         cout << "Program: " << program << endl;
         cout << "Semester: " << semester << endl;
-        cout << "University Name: " << university_name << endl;
-        cout << "University Address: " << university_address << endl;
+       
     }
 };
+// initializing the static counter variable for user id
+int UserProfile::user_count = 1;
 
-int UserProfile::user_count = 0; // Initialize static member
-
-// Class for universities
 class Universities {
 public:
     static vector<string> uni_names;
@@ -79,98 +148,89 @@ public:
     }
 };
 
-vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT"};
-vector<string> Universities::domains = {"riphah", "fast", "nust","au","uet","umt"};
+vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT","Punjab University"};
+vector<string> Universities::domains = {"riphah", "fast", "nust","au","uet","umt","pucit"};
 vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
 
-struct Node {
-        UserProfile data;//data is an object of userProfile class. jitna bhi data hoga user ka sign up kr k wo idhr dll mein store hoga.
-        Node* prev;
-        Node* next;
-        Node( UserProfile& user) : data(user), prev(nullptr), next(nullptr) {}
+// Doubly Linked List UserNode Structure for User Profile objects
+struct UserNode {
+    UserProfile user;
+    UserNode* next;
+    UserNode* prev;
+    // User Node constructor
+    UserNode(UserProfile userObject) {
+        user = userObject;
+        next = nullptr;
+        prev = nullptr;
+    }
 };
-// Doubly linked list class
-class DoublyLinkedList {
-    
-public:
-    
-    Node* head;
-    Node* tail;
 
-
-    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
-    ~DoublyLinkedList() {
-        Node* current = head;
+// Doubly Linked list class for storing head, tail pointer and all operations for UserProfile Object Linked List
+class UserProfileLinkedList {
+    public:
+    UserNode* head;
+    UserNode* tail;
+    UserProfileLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+    // Destructor
+    ~UserProfileLinkedList() {
+        UserNode* current = head;
         while (current) {
-            Node* nextNode = current->next;
+            UserNode* nextNode = current->next;
             delete current;
             current = nextNode;
         }
     }
-
-    // Add user to the end of the list
-    void addUser(UserProfile& user) {
-        Node* newNode = new Node(user);
-        if (!head) {
+    // Adding a user at the end of the Linked List
+    void addUserAtEnd(UserProfile& user) {
+        UserNode* newNode = new UserNode(user);
+        if (head == nullptr) {
             head = tail = newNode;
-        } else {
-            tail->next = newNode;
-            newNode->prev = tail;
+        }
+        else {
+            UserNode* current = head;
+            while(current->next!=nullptr) {
+                current = current->next;
+            }
+            current->next = newNode;
+            newNode->prev = current;
             tail = newNode;
         }
-    }
-
-    // Display Current User Profile
+    } 
     
-    void debugList() {
-        Node* current = head;
-        while (current != nullptr) {
-            cout << "User ID: " << current->data.get_user_id()
-                << ", Email: " << current->data.get_email()
-                << ", Name: " << current->data.get_name() << endl;
-            current = current->next;
-        }
-    }   
-
 };
-
-// Function declarations
-void signupConsole(DoublyLinkedList& userList);
-void displayHomePage(DoublyLinkedList& userList);
-void login(DoublyLinkedList& userList);
+void signupConsole(UserProfileLinkedList& userList);
+void displayHomePage(UserProfileLinkedList& userList);
+void login(UserProfileLinkedList& userList);
 void myDocs();
 void myWallet();
 void discussionForum();
-void displayFirstPage(DoublyLinkedList& userList);
+void displayFirstPage(UserProfileLinkedList& userList);
 void aboutUs();
 bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
-void signUp(DoublyLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
-void currentProfile(DoublyLinkedList& userList);
-
+void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
+void currentProfile(UserProfileLinkedList& userList);
 
 
 int main() {
-    DoublyLinkedList userList ;
+    UserProfileLinkedList userList;
     displayFirstPage(userList);
     return 0;
 }
 
-
-
-
-
-
-void signupConsole(DoublyLinkedList& userList) {
+void signupConsole(UserProfileLinkedList& userList) {
     system("cls");
     Universities uni;
     string name, email, password,confirmPass;
     cin.ignore();
     cout << "Enter name: ";
     getline(cin, name);
-
+     
     cout << "Select University"<<endl;
-    uni.displayUniversities();
+    uni.displayUniversities();  
     int choice=0;
     bool select_university = false;
     do{ 
@@ -212,7 +272,7 @@ void signupConsole(DoublyLinkedList& userList) {
     signUp(userList, name, email, password, Universities::uni_names.at(choice - 1));
 }
 
-void displayFirstPage(DoublyLinkedList& userList) {
+void displayFirstPage(UserProfileLinkedList& userList) {
     int choice;
 
     cout << "\n=== Welcome to DOC-SPOT ===\n";
@@ -241,7 +301,7 @@ void displayFirstPage(DoublyLinkedList& userList) {
     }
 }
 
-void login(DoublyLinkedList& userList) {
+void login(UserProfileLinkedList& userList) {
     string em, pass;
     system("cls");
     cout << "\n--- Login ---\n";
@@ -256,17 +316,17 @@ void login(DoublyLinkedList& userList) {
     cin.ignore();
      getline(cin,pass); 
     bool checkEmail = false;
-    Node* temp = userList.head;
+    UserNode* temp = userList.head;
     while (temp!=nullptr) {
-        if (temp->data.get_email() == em) {
+        if (temp->user.getEmail() == em) {
             checkEmail =true;
             break;
         }
         temp = temp->next;
     }
-    if(temp->data.get_password()==pass && checkEmail){    
+    if(temp->user.getPassword()==pass && checkEmail){    
     cout << "Login successful!\n";
-    currentUser= temp->data.get_user_id();
+    current_user= temp->user.getUserID();
     displayHomePage(userList); 
     }
     else{
@@ -275,9 +335,8 @@ void login(DoublyLinkedList& userList) {
     }
 }
 
-void displayHomePage(DoublyLinkedList& userList) {
+void displayHomePage(UserProfileLinkedList& userList) {
     int choice;
-    userList.debugList();
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
@@ -382,13 +441,21 @@ bool validateEmail(string email,int uni_index){
     return regex_match(email, emailRegex);
 }
 
-void signUp(DoublyLinkedList& userList, string& name, string& email, string& password, string& uni_name) {
-    // Create the user profile
-    UserProfile* user = new UserProfile(name, email, password, uni_name);
+void signUp(UserProfileLinkedList& userList, string& name, string& email, string& password, string& uni_name) {
+    // Create the user profile with corrected constructor call
+    UserProfile user(name, password, email, uni_name);
 
-    currentUser = user->get_user_id();
+    // Add user to the linked list
+    userList.addUserAtEnd(user);
+    // Set the current user ID
+    current_user = user.getUserID();
 
-    userList.addUser(*user);
+    // Increment user count
+    UserProfile::user_count++;
+    int key;
+    cout << "User added with ID: " << user.getUserID() << ", Name: " << user.getUserName() << endl;
+    cout<<"Press Any Key to go to homepage:";
+    cin>>key;
 }
 
 bool validateEmailLogin(string email) {
@@ -405,17 +472,22 @@ bool validateEmailLogin(string email) {
     return false; 
 }
 
-void currentProfile(DoublyLinkedList& userList) {
-        Node* current = userList.head;
-        // Search for the user with the ID matching currentuser
-        while (current) {
-            if (current->data.get_user_id() == currentUser) {
-                // Display the profile of the current user
-                cout << "Logged-in User Profile:\n";
-                current->data.displayProfile();
-                cout << "-------------------------\n";
-                return;
-            }
-            current = current->next;
-        }
+void currentProfile(UserProfileLinkedList& userList) {
+    if (current_user <= 0) {
+        cout << "No user is currently logged in.\n";
+        return;
     }
+    
+    UserNode* current = userList.head;
+    // Search for the user with the ID matching current_user
+    while (current) {
+        if (current->user.getUserID() == current_user) {
+            // Display the profile of the current user
+            current->user.displayProfile();
+            return;
+        }
+        current = current->next;
+    }
+
+    cout << "Error: Current user profile not found.\n";
+}
