@@ -94,6 +94,9 @@ class UserProfile{
     string getDOB() {
         return dob;
     }
+    string getAddress() {
+        return address;
+    }
     string getDepartment() {
         return department;
     }
@@ -214,12 +217,48 @@ bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
 void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
 void currentProfile(UserProfileLinkedList& userList);
+bool isLeapYear(int year);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int main() {
     UserProfileLinkedList userList;
     displayFirstPage(userList);
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void signupConsole(UserProfileLinkedList& userList) {
     system("cls");
@@ -506,12 +545,14 @@ void UserProfile::editProfile() {
         cin>>choice;
         switch(choice) {
             case 1:
+                system("cls");
                 int ch;
                 bool validChoice;
                 cout<<getUserName()<<endl;
                 cout<<"Do you want to edit your Name? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
+                    validChoice=false;
                     if(ch==1) {
                         bool checkName=true;
                         do {
@@ -539,8 +580,194 @@ void UserProfile::editProfile() {
                         cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
                     }
                 }while(!validChoice);
+
+                cout<<getDOB()<<endl;
+                cout<<"Do you want to edit your Date of Birth? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        bool checkDOB=true;
+                        do {
+                        
+                        cin.ignore();
+                        cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
+                        getline(cin, dob);
+                        if(!validDOB(dob)) {
+                            checkDOB=false;
+                        }
+                        } while (!checkDOB);
+                        validChoice=true;
+                        break;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
+
+                cout<<getAddress()<<endl;
+                cout<<"Do you want to edit your Address? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        cin.ignore();
+                        cout << "Enter your new Address";
+                        getline(cin, dob);
+                        validChoice=true;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
+
+                cout<<getDepartment()<<endl;
+                cout<<"Do you want to edit your Department? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        cin.ignore();
+                        cout << "Enter your new Department";
+                        getline(cin, dob);
+                        validChoice=true;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
+
+                cout<<getProgram()<<endl;
+                cout<<"Do you want to edit your Program? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        cin.ignore();
+                        cout << "Enter your new Program";
+                        getline(cin, dob);
+                        validChoice=true;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
+                cout<<getSemester()<<endl;
+                cout<<"Do you want to edit your Semester? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        cin.ignore();
+                        cout << "Enter your new Semester";
+                        cin>>semester;
+                        validChoice=true;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
+
+                cout<<getCampusLocation()<<endl;
+                cout<<"Do you want to edit your Campus Location? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    validChoice=false;
+                    if(ch==1) {
+                        cin.ignore();
+                        cout << "";
+                        
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+
         }
     }
     
 
+}
+
+bool validDOB(string dob) {
+  if (dob.size() != 10) {
+    return false;
+  }
+
+  int day = stoi(dob.substr(0, 2));
+  int month = stoi(dob.substr(3, 2));
+  int year = stoi(dob.substr(6, 4));
+
+  if (year < 1947 || year > 2008) {
+    return false;
+  }
+
+  if (month < 1 || month > 12) {
+    return false;
+  }
+
+  // Check for valid days based on month and leap year
+  if (day < 1 || day > 31) {
+    return false;
+  } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+    if (day > 30) {
+      return false;
+    }
+  } else if (month == 2) {
+    if (isLeapYear(year) && day <= 29) {
+      // valid for leap year
+    } else if (!isLeapYear(year) && day <= 28) {
+      // valid for non-leap year
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Function to check if a year is a leap year
+bool isLeapYear(int year) {
+  if (year % 400 == 0) {
+    return true;
+  } else if (year % 100 == 0) {
+    return false;
+  } else if (year % 4 == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void showCampus() {
+    cout << "Campus Locations: "<< endl;
 }
