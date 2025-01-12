@@ -129,6 +129,7 @@ class UserProfile{
         cout << "Semester: " << semester << endl;
        
     }
+    void editProfile();
 };
 // initializing the static counter variable for user id
 int UserProfile::user_count = 1;
@@ -213,7 +214,6 @@ bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
 void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
 void currentProfile(UserProfileLinkedList& userList);
-
 
 int main() {
     UserProfileLinkedList userList;
@@ -495,4 +495,52 @@ void currentProfile(UserProfileLinkedList& userList) {
         current = current->next;
     }
     cout << "Error: Current user profile not found.\n";
+}
+
+void UserProfile::editProfile() {
+    int choice = -1;
+    if(is_profile_complete) {
+        cout<<"Press 1 to edit your profile."<<endl;
+        cout<<"Press 2 to go back to homepage."<<endl;
+        cout<<"Enter your choice:";
+        cin>>choice;
+        switch(choice) {
+            case 1:
+                int ch;
+                bool validChoice;
+                cout<<getUserName()<<endl;
+                cout<<"Do you want to edit your Name? Press 1 for yes and 0 for No:";
+                cin>>ch;
+                do{
+                    if(ch==1) {
+                        bool checkName=true;
+                        do {
+                        cin.ignore();
+                        cout << "Enter your new name: ";
+                        getline(cin, user_name);
+                        checkName = true;
+                        for (int i = 0; i < getUserName().length(); i++) {
+                        if (!((user_name.at(i) >= 'A' && user_name.at(i) <= 'Z') ||
+                                (user_name.at(i) >= 'a' && user_name.at(i) <= 'z')||(user_name.at(i)==' '))) {
+                            cout << "A name must only consist of alphabets. Please Enter a valid name." << endl;
+                            checkName = false;
+                            break;
+                        }
+                        }
+                        } while (!checkName);
+                        validChoice=true;
+                        break;
+                    }
+                    else if(ch==0) {
+                        validChoice=true;
+                        break;
+                    }
+                    else {
+                        cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
+                    }
+                }while(!validChoice);
+        }
+    }
+    
+
 }
