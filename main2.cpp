@@ -149,7 +149,7 @@ public:
 };
 
 vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT","Punjab University"};
-vector<string> Universities::domains = {"riphah", "fast", "nust","au","uet","umt","pucit"};
+vector<string> Universities::domains = {"students.riphah", "fast", "nust","au","uet","umt","pucit"};
 vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
 
 // Doubly Linked List UserNode Structure for User Profile objects
@@ -225,10 +225,23 @@ void signupConsole(UserProfileLinkedList& userList) {
     system("cls");
     Universities uni;
     string name, email, password,confirmPass;
+    bool checkName=true;
+    do {
     cin.ignore();
     cout << "Enter name: ";
     getline(cin, name);
-     
+
+    checkName = true;
+
+    for (int i = 0; i < name.length(); i++) {
+      if (!((name.at(i) >= 'A' && name.at(i) <= 'Z') ||
+            (name.at(i) >= 'a' && name.at(i) <= 'z')||(name.at(i)==' '))) {
+        cout << "A name must only consist of alphabets. Please Enter a valid name." << endl;
+        checkName = false;
+        break;
+      }
+    }
+  } while (!checkName);
     cout << "Select University"<<endl;
     uni.displayUniversities();  
     int choice=0;
@@ -436,7 +449,7 @@ cout<<"Doc-Spot is a document sharing platform that enables students of differen
 }
 
 bool validateEmail(string email,int uni_index){
-    string pattern = R"(^[\w\.-]+@students\.)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
+    string pattern = R"(^[\w\.-]+@\.)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
     regex emailRegex(pattern);
     return regex_match(email, emailRegex);
 }
@@ -481,6 +494,5 @@ void currentProfile(UserProfileLinkedList& userList) {
         }
         current = current->next;
     }
-
     cout << "Error: Current user profile not found.\n";
 }
