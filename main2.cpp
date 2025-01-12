@@ -62,6 +62,9 @@ class UserProfile{
     void setDOB(string dob) {
         this->dob = dob;
     }
+    void setAddress(string address) {
+        this->address = address;
+    }
     void setDepartment(string depart) {
         department = depart;
     }
@@ -73,6 +76,9 @@ class UserProfile{
     }
     void setCampus(string camp) {
         campus_location = camp;
+    }
+    void setSemester(int sem) {
+        semester = sem;
     }
     void setProfileCompleteCheck() {
         is_profile_complete = !(password=="NULL"||user_name=="NULL"||password=="NULL"||email=="NULL"||dob=="NULL"||department=="NULL"||program=="NULL"||uni_name=="NULL"||campus_location=="NULL");
@@ -132,7 +138,6 @@ class UserProfile{
         cout << "Semester: " << semester << endl;
        
     }
-    void editProfile();
 };
 // initializing the static counter variable for user id
 int UserProfile::user_count = 1;
@@ -205,6 +210,9 @@ class UserProfileLinkedList {
     } 
     
 };
+
+
+
 void signupConsole(UserProfileLinkedList& userList);
 void displayHomePage(UserProfileLinkedList& userList);
 void login(UserProfileLinkedList& userList);
@@ -217,8 +225,10 @@ bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
 void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
 void currentProfile(UserProfileLinkedList& userList);
+void editProfile(UserProfileLinkedList& userList,UserNode* node);
+bool validDOB(string dob);
 bool isLeapYear(int year);
-
+int showAllCampus(string uni);
 
 
 
@@ -529,6 +539,7 @@ void currentProfile(UserProfileLinkedList& userList) {
         if (current->user.getUserID() == current_user) {
             // Display the profile of the current user
             current->user.displayProfile();
+            editProfile(userList,current);
             return;
         }
         current = current->next;
@@ -536,9 +547,9 @@ void currentProfile(UserProfileLinkedList& userList) {
     cout << "Error: Current user profile not found.\n";
 }
 
-void UserProfile::editProfile() {
+void editProfile(UserProfileLinkedList& userList,UserNode* current) {
     int choice = -1;
-    if(is_profile_complete) {
+    if(current->user.getProfileComleteCheck()) {
         cout<<"Press 1 to edit your profile."<<endl;
         cout<<"Press 2 to go back to homepage."<<endl;
         cout<<"Enter your choice:";
@@ -548,27 +559,29 @@ void UserProfile::editProfile() {
                 system("cls");
                 int ch;
                 bool validChoice;
-                cout<<getUserName()<<endl;
+                cout<<current->user.getUserName()<<endl;
                 cout<<"Do you want to edit your Name? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string name;
                         bool checkName=true;
                         do {
                         cin.ignore();
                         cout << "Enter your new name: ";
-                        getline(cin, user_name);
+                        getline(cin, name);
                         checkName = true;
-                        for (int i = 0; i < getUserName().length(); i++) {
-                        if (!((user_name.at(i) >= 'A' && user_name.at(i) <= 'Z') ||
-                                (user_name.at(i) >= 'a' && user_name.at(i) <= 'z')||(user_name.at(i)==' '))) {
-                            cout << "A name must only consist of alphabets. Please Enter a valid name." << endl;
-                            checkName = false;
-                            break;
-                        }
-                        }
+                            for (int i = 0; i < name.length(); i++) {
+                                if (!((name.at(i) >= 'A' && name.at(i) <= 'Z') ||
+                                        (name.at(i) >= 'a' && name.at(i) <= 'z')||(name.at(i)==' '))) {
+                                    cout << "A name must only consist of alphabets. Please Enter a valid name." << endl;
+                                    checkName = false;
+                                    break;
+                                }
+                            }
                         } while (!checkName);
+                        current->user.setUserName(name);
                         validChoice=true;
                         break;
                     }
@@ -581,22 +594,24 @@ void UserProfile::editProfile() {
                     }
                 }while(!validChoice);
 
-                cout<<getDOB()<<endl;
+                cout<<current->user.getDOB()<<endl;
                 cout<<"Do you want to edit your Date of Birth? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string DOB;
                         bool checkDOB=true;
                         do {
                         
                         cin.ignore();
                         cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
-                        getline(cin, dob);
-                        if(!validDOB(dob)) {
-                            checkDOB=false;
-                        }
+                        getline(cin, DOB);
+                            if(!validDOB(DOB)) {
+                                checkDOB=false;
+                            }
                         } while (!checkDOB);
+                        current->user.setDOB(DOB);
                         validChoice=true;
                         break;
                     }
@@ -610,15 +625,17 @@ void UserProfile::editProfile() {
                 }while(!validChoice);
 
 
-                cout<<getAddress()<<endl;
+                cout<<current->user.getAddress()<<endl;
                 cout<<"Do you want to edit your Address? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string address;
                         cin.ignore();
                         cout << "Enter your new Address";
-                        getline(cin, dob);
+                        getline(cin, address);
+                        current->user.setAddress(address);
                         validChoice=true;
                     }
                     else if(ch==0) {
@@ -631,15 +648,17 @@ void UserProfile::editProfile() {
                 }while(!validChoice);
 
 
-                cout<<getDepartment()<<endl;
+                cout<<current->user.getDepartment()<<endl;
                 cout<<"Do you want to edit your Department? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string department;
                         cin.ignore();
                         cout << "Enter your new Department";
-                        getline(cin, dob);
+                        getline(cin, department);
+                        current->user.setDepartment(department);
                         validChoice=true;
                     }
                     else if(ch==0) {
@@ -652,15 +671,17 @@ void UserProfile::editProfile() {
                 }while(!validChoice);
 
 
-                cout<<getProgram()<<endl;
+                cout<<current->user.getProgram()<<endl;
                 cout<<"Do you want to edit your Program? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string program;
                         cin.ignore();
                         cout << "Enter your new Program";
-                        getline(cin, dob);
+                        getline(cin, program);
+                        current->user.setProgram(program);
                         validChoice=true;
                     }
                     else if(ch==0) {
@@ -672,15 +693,17 @@ void UserProfile::editProfile() {
                     }
                 }while(!validChoice);
 
-                cout<<getSemester()<<endl;
+                cout<<current->user.getSemester()<<endl;
                 cout<<"Do you want to edit your Semester? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        int semester;
                         cin.ignore();
                         cout << "Enter your new Semester";
                         cin>>semester;
+                        current->user.setSemester(semester);
                         validChoice=true;
                     }
                     else if(ch==0) {
@@ -693,15 +716,28 @@ void UserProfile::editProfile() {
                 }while(!validChoice);
 
 
-                cout<<getCampusLocation()<<endl;
+                cout<<current->user.getCampusLocation()<<endl;
                 cout<<"Do you want to edit your Campus Location? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
                     validChoice=false;
                     if(ch==1) {
+                        string campus_location;
+                        campuscount:
+                        int ch_camp;
                         cin.ignore();
-                        cout << "";
-                        
+                        cout << "Chose your Campus from the given campuses.";
+                        int uni_index = showAllCampus(current->user.getUniName());
+                        int campus_count= Universities::campus.at(uni_index).size();
+                        cout<<"Enter the number of your campus: ";
+                        cin>>ch_camp;
+                        if(ch_camp>0 && ch_camp<=campus_count) {
+                            current->user.setCampus(Universities::campus.at(uni_index).at(ch_camp-1));
+                        }
+                        else {  
+                            cout<<"Invalid Choice Please Only chose from the given campuses.";
+                            goto campuscount;
+                        }
                     }
                     else if(ch==0) {
                         validChoice=true;
@@ -711,7 +747,13 @@ void UserProfile::editProfile() {
                         cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
                     }
                 }while(!validChoice);
-
+                break;
+            case 2:
+                displayHomePage(userList);
+                break;
+            default:
+                cout<<"Invalid Choice Please Try Again."<<endl;
+                editProfile(userList,current);
         }
     }
     
@@ -768,6 +810,17 @@ bool isLeapYear(int year) {
   }
 }
 
-void showCampus() {
+int showAllCampus(string uni) {
+    int index=-1;
+    for(int i=0;i<Universities::uni_names.size();i++) {
+        if(Universities::uni_names[i]==uni) {
+            index=i;
+        }
+    }
     cout << "Campus Locations: "<< endl;
+    int i=0;
+    for(;i<Universities::campus.at(index).size();i++) {
+        cout <<i<<". "<< Universities::campus.at(index).at(i) << endl;
+    }
+    return index;
 }
