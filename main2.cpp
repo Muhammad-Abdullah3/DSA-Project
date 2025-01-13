@@ -539,8 +539,8 @@ void currentProfile(UserProfileLinkedList& userList) {
         if (current->user.getUserID() == current_user) {
             // Display the profile of the current user
             current->user.displayProfile();
-            editProfile(userList,current);
-            return;
+            // editProfile(userList,current);
+            // return;
         }
         current = current->next;
     }
