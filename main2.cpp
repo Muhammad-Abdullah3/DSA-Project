@@ -231,9 +231,8 @@ private:
     vector<string> tags;
     vector<string> access_keys;
     int downloads;
+    vector<int> bought_document_id;
 
-    // Helper function to generate a random access key
-    
 
 public:
     Documents() {
@@ -702,8 +701,9 @@ void displayHomePage(UserProfileLinkedList& userList) {
 void myDocs() {
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
-    cout << "2. Downloaded Documents\n";
+    cout << "2. Bought Documents\n";
     cout << "3. Upload a New Document\n";
+    cout << "4. Go back\n";
 
     int choice;
     cin >> choice;
