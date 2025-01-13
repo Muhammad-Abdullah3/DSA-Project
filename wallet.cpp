@@ -43,7 +43,8 @@ int main(){
 }
 
 float deposit(){
-cout<<"Enter "
+cout<<"Enter amount to deposit.";
+cin>>
 }
 float withdraw(){
 }
