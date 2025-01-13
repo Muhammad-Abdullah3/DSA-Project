@@ -231,31 +231,13 @@ private:
     vector<string> tags;
     vector<string> access_keys;
     int downloads;
-    int views;
-    int likes;
-    int dislikes;
 
     // Helper function to generate a random access key
-    string generateRandomKey(int length = 12) {
-        const string characters =
-            "abcdefghijklmnopqrstuvwxyz"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "0123456789"
-            "!@#$%^&*()_+-=";
-        string key;
-        for (int i = 0; i < length; ++i) {
-            key += characters[rand() % characters.size()];
-        }
-        return key;
-    }
+    
 
 public:
     Documents() {
         downloads = 0;
-        views = 0;
-        likes = 0;
-        dislikes = 0;
-        srand(static_cast<unsigned int>(time(0))); // Seed for random key generation
     }
 
     // Setters
@@ -295,9 +277,7 @@ public:
         time_t now = time(0);
         tm* ltm = localtime(&now);
 
-        uploaded_date = (ltm->tm_mday < 10 ? "0" : "") + to_string(ltm->tm_mday) + "-" +
-                        (ltm->tm_mon + 1 < 10 ? "0" : "") + to_string(ltm->tm_mon + 1) + "-" +
-                        to_string(1900 + ltm->tm_year);
+        uploaded_date = (ltm->tm_mday < 10 ? "0" : "") + to_string(ltm->tm_mday) + "-" + (ltm->tm_mon + 1 < 10 ? "0" : "") + to_string(ltm->tm_mon + 1) + "-" + to_string(1900 + ltm->tm_year);
     }
 
     void setTitle(string title) {
@@ -325,17 +305,6 @@ public:
     }
 
     // Increment Methods
-    void addLike() {
-        likes++;
-    }
-
-    void addDislike() {
-        dislikes++;
-    }
-
-    void addView() {
-        views++;
-    }
 
     void addDownload() {
         downloads++;
@@ -348,7 +317,18 @@ public:
     int getUserID()  {
         return user_id;
     }
-
+    string getInstructor()  {
+        return instructor;
+    }
+    string getCourseName() {
+        return course_name;
+    }
+    string getAcademicYear() {
+        return academic_year;
+    }
+    int getSemester() {
+        return semester;
+    }
     string getTitle()  {
         return title;
     }
@@ -369,9 +349,23 @@ public:
     string getUploadedDate()  {
         return uploaded_date;
     }
+    int getDownloads() {
+        return downloads;
+    }
 
-    
-
+    string generateRandomKey(int length = 12) {
+        srand(static_cast<unsigned int>(time(0)));
+        const string characters =
+            "abcdefghijklmnopqrstuvwxyz"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "0123456789"
+            "!@#$%^&*()_+-=";
+        string key;
+        for (int i = 0; i < length; ++i) {
+            key += characters[rand() % characters.size()];
+        }
+        return key;
+    }
 
     // Display Document Information
     void displayDocumentInfo() {
@@ -388,13 +382,59 @@ public:
         cout << "File Path: " << file_path << endl;
         cout << "Price: " << price << endl;
         cout << "Downloads: " << downloads << endl;
-        cout << "Views: " << views << endl;
-        cout << "Likes: " << likes << endl;
-        cout << "Dislikes: " << dislikes << endl;
+
     }
 };
 
+// Doubly Linked List UserNode Structure for User Profile objects
+struct DocNode {
+    Documents doc;
+    DocNode* next;
+    DocNode* prev;
+    // User Node constructor
+    DocNode(Documents document) {
+        doc = document;
+        next = nullptr;
+        prev = nullptr;
+    }
+};
 
+// Doubly Linked list class for storing head, tail pointer and all operations for Documents Object Linked List
+class DocumentLinkedList {
+    public:
+    DocNode* head;
+    DocNode* tail;
+    DocumentLinkedList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+    // Destructor
+    ~DocumentLinkedList() {
+        DocNode* current = head;
+        while (current) {
+            DocNode* nextNode = current->next;
+            delete current;
+            current = nextNode;
+        }
+    }
+    // Adding a user at the end of the Linked List
+    void addUserAtEnd(Documents& doc) {
+        DocNode* newNode = new DocNode(doc);
+        if (head == nullptr) {
+            head = tail = newNode;
+        }
+        else {
+            DocNode* current = head;
+            while(current->next!=nullptr) {
+                current = current->next;
+            }
+            current->next = newNode;
+            newNode->prev = current;
+            tail = newNode;
+        }
+    } 
+    
+};
 
 
 
