@@ -3,6 +3,7 @@
 #include<vector>
 #include<conio.h>
 #include<regex>
+#include<ctime>
 using namespace std;
 
 static int current_user =1;// for storing the id of the current user present
@@ -212,6 +213,208 @@ class UserProfileLinkedList {
 };
 
 
+//// Document Class and nodes and linked list for handling document
+class Documents {
+private:
+    int document_id;
+    int user_id;
+    string instructor;
+    string academic_year;
+    string course_name;
+    int semester;
+    bool isfree;
+    string discription;
+    string uploaded_date;
+    string title;
+    string file_path;
+    float price;
+    vector<string> tags;
+    vector<string> access_keys;
+    int downloads;
+    int views;
+    int likes;
+    int dislikes;
+
+    // Helper function to generate a random access key
+    string generateRandomKey(int length = 12) {
+        const string characters =
+            "abcdefghijklmnopqrstuvwxyz"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "0123456789"
+            "!@#$%^&*()_+-=";
+        string key;
+        for (int i = 0; i < length; ++i) {
+            key += characters[rand() % characters.size()];
+        }
+        return key;
+    }
+
+public:
+    Documents() {
+        downloads = 0;
+        views = 0;
+        likes = 0;
+        dislikes = 0;
+        srand(static_cast<unsigned int>(time(0))); // Seed for random key generation
+    }
+
+    // Setters
+    void setDocument_id(int document_id) {
+        this->document_id = document_id;
+    }
+
+    void setUser_id(int user_id) {
+        this->user_id = user_id;
+    }
+
+    void setInstructor(string instructor) {
+        this->instructor = instructor;
+    }
+
+    void setAcademic_year(string academic_year) {
+        this->academic_year = academic_year;
+    }
+
+    void setCourse_name(string course_name) {
+        this->course_name = course_name;
+    }
+
+    void setSemester(int semester) {
+        this->semester = semester;
+    }
+
+    void setIsfree(bool isfree) {
+        this->isfree = isfree;
+    }
+
+    void setDiscription(string discription) {
+        this->discription = discription;
+    }
+
+    void setUploadedDate() {
+        time_t now = time(0);
+        tm* ltm = localtime(&now);
+
+        uploaded_date = (ltm->tm_mday < 10 ? "0" : "") + to_string(ltm->tm_mday) + "-" +
+                        (ltm->tm_mon + 1 < 10 ? "0" : "") + to_string(ltm->tm_mon + 1) + "-" +
+                        to_string(1900 + ltm->tm_year);
+    }
+
+    void setTitle(string title) {
+        this->title = title;
+    }
+
+    void setFilePath(string file_path) {
+        this->file_path = file_path;
+    }
+
+    void setPrice(float price) {
+        this->price = price;
+    }
+
+    void addTag(string tag) {
+        this->tags.push_back(tag);
+    }
+
+    // Generates 10 access keys
+    void generateAccessKeys() {
+        access_keys.clear(); // Clear any existing keys
+        for (int i = 0; i < 10; ++i) {
+            access_keys.push_back(generateRandomKey());
+        }
+    }
+
+    // Increment Methods
+    void addLike() {
+        likes++;
+    }
+
+    void addDislike() {
+        dislikes++;
+    }
+
+    void addView() {
+        views++;
+    }
+
+    void addDownload() {
+        downloads++;
+    }
+
+    // Getters
+    int getDocumentID()  {
+        return document_id;
+    }
+    int getUserID()  {
+        return user_id;
+    }
+
+    string getTitle()  {
+        return title;
+    }
+    string getFilePath()  {
+        return file_path;
+    }
+    float getPrice()  {
+        return price;
+    }
+    vector<string> getTags()  {
+        return tags;
+    }
+    vector<string> getAccessKeys()  {
+        return access_keys;
+    }
+
+
+    string getUploadedDate()  {
+        return uploaded_date;
+    }
+
+    
+
+
+    // Display Document Information
+    void displayDocumentInfo() {
+        cout << "Document ID: " << document_id << endl;
+        cout << "User ID: " << user_id << endl;
+        cout << "Instructor: " << instructor << endl;
+        cout << "Academic Year: " << academic_year << endl;
+        cout << "Course Name: " << course_name << endl;
+        cout << "Semester: " << semester << endl;
+        cout << "Is Free: " << (isfree ? "Yes" : "No") << endl;
+        cout << "Description: " << discription << endl;
+        cout << "Uploaded Date: " << uploaded_date << endl;
+        cout << "Title: " << title << endl;
+        cout << "File Path: " << file_path << endl;
+        cout << "Price: " << price << endl;
+        cout << "Downloads: " << downloads << endl;
+        cout << "Views: " << views << endl;
+        cout << "Likes: " << likes << endl;
+        cout << "Dislikes: " << dislikes << endl;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void signupConsole(UserProfileLinkedList& userList);
 void displayHomePage(UserProfileLinkedList& userList);
@@ -225,6 +428,7 @@ bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
 void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
 void currentProfile(UserProfileLinkedList& userList);
+void completeProfile(UserProfileLinkedList& userList);
 void editProfile(UserProfileLinkedList& userList,UserNode* node);
 bool validDOB(string dob);
 bool isLeapYear(int year);
@@ -308,19 +512,19 @@ void signupConsole(UserProfileLinkedList& userList) {
     if(choice==0) {
         displayFirstPage(userList);
     }
-    do{
+    do {
         cin.ignore();
         cout << "Enter email: ";
         getline(cin, email);
-        cout<<"";
+        
+
         if (validateEmail(email, choice)) {
             break;
+        } else {
+            cout << "You should only use a University Email. Please try again." << endl;
         }
-        else {
-            cout << "You should only use University Email. Please try again." << endl;
+    } while (true);
 
-        }
-    } while (!(validateEmail(email, choice)));
     cin.ignore();
     cout << "Enter Passowrd: ";
     getline(cin, password);
@@ -329,8 +533,9 @@ void signupConsole(UserProfileLinkedList& userList) {
     if (password == confirmPass) {
         signUp(userList, name, email, password, Universities::uni_names.at(choice - 1));
         cout << "Successful Account Creation";
+    
         system("cls");
-        displayHomePage(userList);
+        completeProfile(userList);    
     }
 }
 
@@ -516,7 +721,7 @@ cout<<"Doc-Spot is a document sharing platform that enables students of differen
 }
 
 bool validateEmail(string email,int uni_index){
-    string pattern = R"(^[\w\.-]+@\.)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
+    string pattern = R"(^[\w\.-]+@)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
     regex emailRegex(pattern);
     return regex_match(email, emailRegex);
 }
@@ -564,11 +769,78 @@ void currentProfile(UserProfileLinkedList& userList) {
     }
     cout<< "Error: Current user profile not found.\n";
 }
+void completeProfile(UserProfileLinkedList& userList){
+    cout<<"----------Complete Your Profile to Proceed------------"<<endl;
+   
+    UserNode* temp=userList.tail;
+    if(temp->user.getAddress()=="NULL"){
+            string address;
+            cin.ignore();
+            cout << "Enter your Address: ";
+            getline(cin, address);
+            temp->user.setAddress(address);
+    }
+    if(temp->user.getDOB()=="NULL"){
+        string DOB;
+        bool checkDOB=true;
+        do {        
+            cin.ignore();
+            cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
+            getline(cin, DOB);
+            if(!validDOB(DOB)) {
+                cout<<"Invalid Date Format"<<endl;
+                checkDOB=false;
+            }
+        }while(!checkDOB);
+        temp->user.setDOB(DOB);                   
+    }
+    if(temp->user.getDepartment()=="NULL"){
+        string department;
+        cin.ignore();
+        cout << "Enter your Department";
+        getline(cin, department);
+        temp->user.setDepartment(department);
+    }
 
+    if(temp->user.getProgram()=="NULL"){
+        string program;
+        cin.ignore();
+        cout << "Enter your Program";
+        getline(cin, program);
+        temp->user.setProgram(program);
+    }
+
+    if(temp->user.getCampusLocation()=="NULL"){
+        string campus_location;
+        campuscount:
+        int ch_camp;
+        cin.ignore();
+        cout << "Chose your Campus from the given campuses.";
+        int uni_index = showAllCampus(temp->user.getUniName());
+        int campus_count= Universities::campus.at(uni_index).size();
+        cout<<"Enter the number of your campus: ";
+        cin>>ch_camp;
+        if(ch_camp>0 && ch_camp<=campus_count){
+                            temp->user.setCampus(Universities::campus.at(uni_index).at(ch_camp-1));
+        }
+        else {  
+            cout<<"Invalid Choice Please Only chose from the given campuses.";
+            goto campuscount;
+        }
+    }
+    if(temp->user.getSemester()==-1){
+        int semester;
+        cout<<"Enter your Semester: ";
+        cin>>semester;
+        temp->user.setSemester(semester);
+    }
+    cout<<"Press any key to go Home page.";
+    cin.get();
+    displayHomePage(userList);
+
+    }
 void editProfile(UserProfileLinkedList& userList,UserNode* current) {
     int choice = -1;
-    current->user.setProfileCompleteCheck();
-    if(current->user.getProfileCompleteCheck()) {
         cout<<"Press 1 to edit your profile."<<endl;
         cout<<"Press 2 to go back to homepage."<<endl;
         cout<<"Enter your choice:";
@@ -773,14 +1045,8 @@ void editProfile(UserProfileLinkedList& userList,UserNode* current) {
             default:
                 cout<<"Invalid Choice Please Try Again."<<endl;
                 editProfile(userList,current);
-        }
-    }
-    else{
-        cout<<"Complete your Profile."<<endl;
-    cout<<"";
-
-    }
-    
+        
+    }  
 
 }
 

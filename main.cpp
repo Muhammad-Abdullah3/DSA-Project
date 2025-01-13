@@ -212,6 +212,31 @@ class UserProfileLinkedList {
 };
 
 
+//// Document Class and nodes and linked list for handling document
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void signupConsole(UserProfileLinkedList& userList);
 void displayHomePage(UserProfileLinkedList& userList);
@@ -225,6 +250,7 @@ bool validateEmail(string email,int uni_index);
 bool validateEmailLogin(string email);
 void signUp(UserProfileLinkedList& userList,  string& name, string& email,  string& password,string& uni_name);
 void currentProfile(UserProfileLinkedList& userList);
+void completeProfile(UserProfileLinkedList& userList);
 void editProfile(UserProfileLinkedList& userList,UserNode* node);
 bool validDOB(string dob);
 bool isLeapYear(int year);
@@ -308,19 +334,19 @@ void signupConsole(UserProfileLinkedList& userList) {
     if(choice==0) {
         displayFirstPage(userList);
     }
-    do{
+    do {
         cin.ignore();
         cout << "Enter email: ";
         getline(cin, email);
-        cout<<"";
+        
+
         if (validateEmail(email, choice)) {
             break;
+        } else {
+            cout << "You should only use a University Email. Please try again." << endl;
         }
-        else {
-            cout << "You should only use University Email. Please try again." << endl;
+    } while (true);
 
-        }
-    } while (!(validateEmail(email, choice)));
     cin.ignore();
     cout << "Enter Passowrd: ";
     getline(cin, password);
@@ -331,7 +357,7 @@ void signupConsole(UserProfileLinkedList& userList) {
         cout << "Successful Account Creation";
     
         system("cls");
-    completeProfile(userList);    
+        completeProfile(userList);    
     }
 }
 
@@ -517,7 +543,7 @@ cout<<"Doc-Spot is a document sharing platform that enables students of differen
 }
 
 bool validateEmail(string email,int uni_index){
-    string pattern = R"(^[\w\.-]+@\.)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
+    string pattern = R"(^[\w\.-]+@)" + Universities::domains.at(uni_index-1) + R"(\.edu\.pk$)";
     regex emailRegex(pattern);
     return regex_match(email, emailRegex);
 }
@@ -566,76 +592,75 @@ void currentProfile(UserProfileLinkedList& userList) {
     cout<< "Error: Current user profile not found.\n";
 }
 void completeProfile(UserProfileLinkedList& userList){
+    cout<<"----------Complete Your Profile to Proceed------------"<<endl;
    
     UserNode* temp=userList.tail;
-if(temp->user.getAddress()=="NULL"){
-     string address;
-                        cin.ignore();
-                        cout << "Enter your new Address";
-                        getline(cin, address);
-                        temp->user.setAddress(address);
+    if(temp->user.getAddress()=="NULL"){
+            string address;
+            cin.ignore();
+            cout << "Enter your Address: ";
+            getline(cin, address);
+            temp->user.setAddress(address);
+    }
+    if(temp->user.getDOB()=="NULL"){
+        string DOB;
+        bool checkDOB=true;
+        do {        
+            cin.ignore();
+            cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
+            getline(cin, DOB);
+            if(!validDOB(DOB)) {
+                cout<<"Invalid Date Format"<<endl;
+                checkDOB=false;
+            }
+        }while(!checkDOB);
+        temp->user.setDOB(DOB);                   
+    }
+    if(temp->user.getDepartment()=="NULL"){
+        string department;
+        cin.ignore();
+        cout << "Enter your Department";
+        getline(cin, department);
+        temp->user.setDepartment(department);
+    }
 
-}
-if(temp->user.getDOB()=="NULL"){
- string DOB;
-                        bool checkDOB=true;
-                        do {
-                        
-                        cin.ignore();
-                        cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
-                        getline(cin, DOB);
-                            if(!validDOB(DOB)) {
-                                checkDOB=false;
-                            }
-                        } while (!checkDOB);
-                        temp->user.setDOB(DOB);
-                     
-}
-if(temp->user.getDepartment()=="NULL"){
- string department;
-                        cin.ignore();
-                        cout << "Enter your new Department";
-                        getline(cin, department);
-                        temp->user.setDepartment(department);
-}
+    if(temp->user.getProgram()=="NULL"){
+        string program;
+        cin.ignore();
+        cout << "Enter your Program";
+        getline(cin, program);
+        temp->user.setProgram(program);
+    }
 
-if(temp->user.getProgram()=="NULL"){
- string program;
-                        cin.ignore();
-                        cout << "Enter your new Program";
-                        getline(cin, program);
-                       temp->user.setProgram(program);
-}
-
-if(temp->user.getCampusLocation()=="NULL"){
-string campus_location;
-                        campuscount:
-                        int ch_camp;
-                        cin.ignore();
-                        cout << "Chose your Campus from the given campuses.";
-                        int uni_index = showAllCampus(temp->user.getUniName());
-                        int campus_count= Universities::campus.at(uni_index).size();
-                        cout<<"Enter the number of your campus: ";
-                        cin>>ch_camp;
-                        if(ch_camp>0 && ch_camp<=campus_count){
+    if(temp->user.getCampusLocation()=="NULL"){
+        string campus_location;
+        campuscount:
+        int ch_camp;
+        cin.ignore();
+        cout << "Chose your Campus from the given campuses.";
+        int uni_index = showAllCampus(temp->user.getUniName());
+        int campus_count= Universities::campus.at(uni_index).size();
+        cout<<"Enter the number of your campus: ";
+        cin>>ch_camp;
+        if(ch_camp>0 && ch_camp<=campus_count){
                             temp->user.setCampus(Universities::campus.at(uni_index).at(ch_camp-1));
-                        }
-                        else {  
-                            cout<<"Invalid Choice Please Only chose from the given campuses.";
-                            goto campuscount;
-                        }
-}
-if(temp->user.getSemester()==-1){
-int semester;
-cout<<"Enter your Semester: ";
-cin>>semester;
-temp->user.setSemester(semester);
-}
-cout<<"Press any key to go Home page.";
-cin.get();
-displayHomePage(userList);
+        }
+        else {  
+            cout<<"Invalid Choice Please Only chose from the given campuses.";
+            goto campuscount;
+        }
+    }
+    if(temp->user.getSemester()==-1){
+        int semester;
+        cout<<"Enter your Semester: ";
+        cin>>semester;
+        temp->user.setSemester(semester);
+    }
+    cout<<"Press any key to go Home page.";
+    cin.get();
+    displayHomePage(userList);
 
-}
+    }
 void editProfile(UserProfileLinkedList& userList,UserNode* current) {
     int choice = -1;
         cout<<"Press 1 to edit your profile."<<endl;
