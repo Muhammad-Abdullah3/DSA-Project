@@ -2,6 +2,7 @@
 #include<vector>
 #include<string>
 using namespace std;
+int current_user=1;
 class Documents{
     private:
     int document_id;
@@ -136,12 +137,17 @@ public:
 
 };
 int Documents::document_count=0;
+  void displayDocument(DocumentSinglyLinkedList& documentlist);
 
+  
 int main(){
-    
+   
 }
 
-//    void displayDocument() const {
+void displayDocument(DocumentSinglyLinkedList& documentlist){
+
+}
+//   void displayDocument() const {
 //         cout << "Document ID: " << document_id << endl;
 //         cout << "Uploaded by User ID: " << user_id << endl;
 //         cout << "Title: " << title << endl;
@@ -154,4 +160,3 @@ int main(){
 //             cout << tag << " ";
 //         cout << endl;
 //     }
-// };
