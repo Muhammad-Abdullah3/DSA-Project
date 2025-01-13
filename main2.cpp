@@ -274,7 +274,7 @@ void signupConsole(UserProfileLinkedList& userList) {
     system("cls");
     Universities uni;
     string name, email, password,confirmPass;
-    bool checkName=true;
+    bool checkName;
     do {
     cin.ignore();
     cout << "Enter name: ";
@@ -514,7 +514,7 @@ void signUp(UserProfileLinkedList& userList, string& name, string& email, string
 }
 
 bool validateEmailLogin(string email) {
-    string basePattern = R"(^[\w\.-]+@students\.)";
+    string basePattern = R"(^[\w\.-]+@\.)";
     string suffix = R"(\.edu\.pk$)";
     
     for (auto domain : Universities::domains) {
