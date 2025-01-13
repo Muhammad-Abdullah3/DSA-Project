@@ -81,7 +81,7 @@ class UserProfile{
         semester = sem;
     }
     void setProfileCompleteCheck() {
-        is_profile_complete = !(password=="NULL"||user_name=="NULL"||password=="NULL"||email=="NULL"||dob=="NULL"||department=="NULL"||program=="NULL"||uni_name=="NULL"||campus_location=="NULL");
+        is_profile_complete = !(password=="NULL"||user_name=="NULL"||password=="NULL"||email=="NULL"||dob=="NULL"||department=="NULL"||program=="NULL"||uni_name=="NULL"||campus_location=="NULL"|| semester==-1);
     }
 
     //Getter Functions
@@ -118,7 +118,7 @@ class UserProfile{
     int getSemester() {
         return semester;
     }
-    bool getProfileComleteCheck() {
+    bool getProfileCompleteCheck() {
         return is_profile_complete;
     }
     // function to display the profile
@@ -352,7 +352,25 @@ void displayFirstPage(UserProfileLinkedList& userList) {
         signupConsole(userList);
         break;
     case 3:
+    int ch;
+    bool validch;
         aboutUs();
+        cout<<"Enter \"0\" to Go Back and \"1\" to exit from Doc-Spot.";
+        do{
+          validch=true;
+          cin>>ch;
+          switch(ch){
+            case 0:
+                displayFirstPage(userList);
+                break;
+            case 1:
+                exit(0);
+                break;
+                default:
+                cout<<"Invalid choice.";
+                validch=false;
+          }
+        }while(!validch);
         break;
     case 4:
         cout << "Exiting DOC-SPOT. Goodbye!\n";
@@ -535,21 +553,22 @@ void currentProfile(UserProfileLinkedList& userList) {
     
     UserNode* current = userList.head;
     // Search for the user with the ID matching current_user
-    while (current) {
+    while (current!=nullptr) {
         if (current->user.getUserID() == current_user) {
             // Display the profile of the current user
             current->user.displayProfile();
-            // editProfile(userList,current);
-            // return;
+            editProfile(userList,current);
+            return;
         }
         current = current->next;
     }
-    cout << "Error: Current user profile not found.\n";
+    cout<< "Error: Current user profile not found.\n";
 }
 
 void editProfile(UserProfileLinkedList& userList,UserNode* current) {
     int choice = -1;
-    if(current->user.getProfileComleteCheck()) {
+    current->user.setProfileCompleteCheck();
+    if(current->user.getProfileCompleteCheck()) {
         cout<<"Press 1 to edit your profile."<<endl;
         cout<<"Press 2 to go back to homepage."<<endl;
         cout<<"Enter your choice:";
@@ -755,6 +774,11 @@ void editProfile(UserProfileLinkedList& userList,UserNode* current) {
                 cout<<"Invalid Choice Please Try Again."<<endl;
                 editProfile(userList,current);
         }
+    }
+    else{
+        cout<<"Complete your Profile."<<endl;
+    cout<<"";
+
     }
     
 
