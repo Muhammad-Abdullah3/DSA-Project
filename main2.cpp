@@ -785,7 +785,6 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
-    cout << "2. Bought Documents\n";
     cout << "3. Upload a New Document\n";
     cout << "4. Go back\n";
 
