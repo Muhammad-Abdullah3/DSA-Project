@@ -747,6 +747,7 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
+        cout << "2. Explore\n";
         cout << "2. My Docs\n";
         cout << "3. My Wallet\n";
         cout << "4. Discussion Forum\n";
