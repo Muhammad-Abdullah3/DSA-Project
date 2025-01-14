@@ -747,9 +747,11 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
+        cout << "2. Explore\n";
         cout << "2. My Docs\n";
-        cout << "3. Explore\n";
-        cout << "4. Log Out\n";
+        cout << "3. My Wallet\n";
+        cout << "4. Discussion Forum\n";
+        cout << "5. Log Out\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -764,6 +766,9 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
             myWallet();
             break;
         case 4:
+            discussionForum();
+            break;
+        case 5:
             cout << "Logging out...\n";
             cout<<"...Sucessfully Logged Out...\n\n\n\n\n";
             system("cls");
@@ -810,6 +815,38 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     }while(!validch);
 }
 
+void myWallet() {
+    cout << "\n--- My Wallet ---\n";
+    cout << "1. Current Balance: $100\n";
+    cout << "2. Deposit Balance\n";
+    cout << "3. Withdraw Balance\n";
+    cout << "4. Take a Loan\n";
+
+    int choice;
+    cin >> choice;
+
+    switch (choice) {
+    case 1:
+        cout << "Your current balance is $100.\n";
+        break;
+    case 2:
+        cout << "Feature to deposit balance...\n";
+        break;
+    case 3:
+        cout << "Feature to withdraw balance...\n";
+        break;
+    case 4:
+        cout << "Feature to take a loan...\n";
+        break;
+    default:
+        cout << "Invalid choice. Please try again.\n";
+    }
+}
+
+void discussionForum() {
+    cout << "\n--- Discussion Forum ---\n";
+    cout << "Feature to start and join discussions will be here.\n";
+}
 
 void aboutUs(){
 cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners.";
