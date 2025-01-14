@@ -554,7 +554,8 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
 bool validDOB(string dob);
 bool isLeapYear(int year);
 int showAllCampus(string uni);
-
+void explore(UserProfileLinkedList& userList,DocumentLinkedList& docList);
+void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 
 
 
@@ -761,7 +762,7 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
             myDocs(userList,docList);
             break;
         case 3:
-            myWallet();
+          explore(userList, docList);
             break;
         case 4:
             cout << "Logging out...\n";
@@ -1240,5 +1241,54 @@ void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedLis
     } else {
         cout << "Invalid input. Returning to My Docs menu.\n";
         myDocs(userList, docList);
+    }
+}
+void explore(UserProfileLinkedList& userList,DocumentLinkedList& docList){
+cout<<"Enter 1 to show all documents."<<endl;
+cout<<"Enter 2 to show your University."<<endl;
+cout<<"Enter 3 to show your Department."<<endl;
+cout<<"Enter 4 to show your Program."<<endl;
+cout<<"Enter 5 to show your Tag."<<endl;
+char exp_choice;
+bool validch;
+do{
+    validch = true;
+    cout<<"Enter your choice:";
+    cin>>exp_choice;
+    switch(exp_choice) {
+    case 1:
+        displayAllDocs(userList,docList);
+        break;
+    
+    case 2:
+
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
+    default:
+        cout<<"Invalid choice.";
+        validch=false;
+        break;
+    }
+}while(!validch);
+}
+void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
+    DocNode* temp = docList.tail;
+
+    // Traverse the list backward
+    while (temp != nullptr) {
+        // Call the display function for the current document
+        if(temp->doc.getUserID()!=current_user) {
+            temp->doc.displayDocumentInfo();
+
+            // Print separator line
+            cout << "---------------------------------------" << std::endl;
+        }
+        // Move to the previous node
+        temp = temp->prev;
     }
 }

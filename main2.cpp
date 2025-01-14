@@ -6,7 +6,7 @@
 #include<ctime>
 using namespace std;
 
-static int current_user =1;// for storing the id of the current user present
+static int current_user = 1;// for storing the id of the current user present
 
 // class for storing the user's profile info or we can say student's info
 class UserProfile{
@@ -814,33 +814,6 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     }while(!validch);
 }
 
-void myWallet() {
-    cout << "\n--- My Wallet ---\n";
-    cout << "1. Current Balance: $100\n";
-    cout << "2. Deposit Balance\n";
-    cout << "3. Withdraw Balance\n";
-    cout << "4. Take a Loan\n";
-
-    int choice;
-    cin >> choice;
-
-    switch (choice) {
-    case 1:
-        cout << "Your current balance is $100.\n";
-        break;
-    case 2:
-        cout << "Feature to deposit balance...\n";
-        break;
-    case 3:
-        cout << "Feature to withdraw balance...\n";
-        break;
-    case 4:
-        cout << "Feature to take a loan...\n";
-        break;
-    default:
-        cout << "Invalid choice. Please try again.\n";
-    }
-}
 
 void discussionForum() {
     cout << "\n--- Discussion Forum ---\n";
