@@ -19,7 +19,7 @@ class UserProfile{
     int semester;
     bool is_profile_complete;
     ////
-    vector<int> bought_document_id;/// We will use this 
+    vector<int> downloaded_document_id;/// We will use this 
     public:
     //for auto incrementation of user_id we use static variable of user count
     static int user_count;

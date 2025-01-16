@@ -541,8 +541,6 @@ void signupConsole(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void login(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList);
-void myWallet();
-void discussionForum();
 void displayFirstPage(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void aboutUs();
 bool validateEmail(string email,int uni_index);
@@ -556,6 +554,7 @@ bool isLeapYear(int year);
 int showAllCampus(string uni);
 void explore(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList);
+void filterByUniversity(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 
 
 
@@ -781,11 +780,10 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
-    cout << "2. Bought Documents\n";
-    cout << "3. Upload a New Document\n";
-    cout << "4. Go back\n";
+    cout << "2. Upload a New Document\n";
+    cout << "3. Go back\n";
 
-    int choice;
+    char choice;
     bool validch;
     do{
         validch=true;
@@ -1292,3 +1290,6 @@ void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList)
         temp = temp->prev;
     }
 }
+void filterByUniversity(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
+
+} 
