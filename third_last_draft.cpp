@@ -228,6 +228,7 @@ private:
     bool isfree;
     string discription;
     string uploaded_date;
+    string uni_name;
     string title;
     string file_path;
     float price;
@@ -326,6 +327,9 @@ public:
     }
     string getCourseName() {
         return course_name;
+    }
+    string getUniName() {
+        return uni_name;
     }
     string getAcademicYear() {
         return academic_year;
@@ -1254,6 +1258,87 @@ void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedLis
     DocNode* current = docList.head;
     while (current != nullptr) {
         if (current->doc.getUserID() == current_user) {
+            docStack.push(current->doc); // Push documents belonging to the current user
+        }
+        current = current->next;
+    }
+
+    // Display documents from the stack
+    if (docStack.isEmpty()) {
+        cout << "No uploaded documents found for the current user.\n";
+    } else {
+        cout << "\n--- Uploaded Documents ---\n";
+        docStack.displayStack();
+    }
+
+    // Go back option
+    cout << "\nEnter 1 to go back: ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        myDocs(userList, docList); // Call myDocs again to go back
+    } else {
+        cout << "Invalid input. Returning to My Docs menu.\n";
+        myDocs(userList, docList);
+    }
+}
+
+
+void filterByUni(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    DocumentStack docStack; // Create a stack to store documents
+
+    UserNode* currentUserNode = userList.head;
+    while (currentUserNode != nullptr) {
+        if (currentUserNode->user.getUserID() == current_user) {
+            break; 
+        }
+        currentUserNode = currentUserNode->next;
+    }
+    // Traverse through the document linked list
+    DocNode* current = docList.head;
+    while (current != nullptr) {
+        if (current->doc.getUniName() == currentUserNode->user.getUniName()) {
+            docStack.push(current->doc); // Push documents belonging to the current user
+        }
+        current = current->next;
+    }
+
+    // Display documents from the stack
+    if (docStack.isEmpty()) {
+        cout << "No uploaded documents found for the current user.\n";
+    } else {
+        cout << "\n--- Uploaded Documents ---\n";
+        docStack.displayStack();
+    }
+
+    // Go back option
+    cout << "\nEnter 1 to go back: ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        myDocs(userList, docList); // Call myDocs again to go back
+    } else {
+        cout << "Invalid input. Returning to My Docs menu.\n";
+        myDocs(userList, docList);
+    }
+}
+
+void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    DocumentStack docStack; // Create a stack to store documents
+
+    UserNode* currentUserNode = userList.head;
+    while (currentUserNode != nullptr) {
+        if (currentUserNode->user.getUserID() == current_user) {
+            break; 
+        }
+        currentUserNode = currentUserNode->next;
+    }
+    // Traverse through the document linked list
+    DocNode* current = docList.head;
+    while (current != nullptr) {
+        if ((current->doc.getUniName() == currentUserNode->user.getUniName()) && (current->doc.getSemester() == currentUserNode->user.getSemester()) ) {
             docStack.push(current->doc); // Push documents belonging to the current user
         }
         current = current->next;
