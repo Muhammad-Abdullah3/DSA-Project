@@ -1539,8 +1539,7 @@ do {
             default:
         }
     }    
-} while (!checkChoice); // Continue until valid choice is entered
-
+} while (!checkChoice);
 
 
 }
