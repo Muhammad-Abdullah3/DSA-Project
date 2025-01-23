@@ -19,7 +19,7 @@ class UserProfile{
     int semester;
     bool is_profile_complete;
     ////
-    vector<int> bought_document_id;/// We will use this 
+    vector<int> downloaded_document_id;/// We will use this 
     public:
     //for auto incrementation of user_id we use static variable of user count
     static int user_count;
@@ -228,6 +228,7 @@ private:
     bool isfree;
     string discription;
     string uploaded_date;
+    string uni_name;
     string title;
     string file_path;
     float price;
@@ -326,6 +327,9 @@ public:
     }
     string getCourseName() {
         return course_name;
+    }
+    string getUniName() {
+        return uni_name;
     }
     string getAcademicYear() {
         return academic_year;
@@ -541,6 +545,8 @@ void signupConsole(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void login(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList);
+void myWallet();
+void discussionForum();
 void displayFirstPage(UserProfileLinkedList& userList,DocumentLinkedList& docList);
 void aboutUs();
 bool validateEmail(string email,int uni_index);
@@ -552,9 +558,7 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
 bool validDOB(string dob);
 bool isLeapYear(int year);
 int showAllCampus(string uni);
-void explore(UserProfileLinkedList& userList,DocumentLinkedList& docList);
-void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList);
-void filterByUniversity(UserProfileLinkedList& userList,DocumentLinkedList& docList);
+
 
 
 
@@ -747,9 +751,11 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
+        cout << "2. Explore\n";
         cout << "2. My Docs\n";
-        cout << "3. Explore\n";
-        cout << "4. Log Out\n";
+        cout << "3. My Wallet\n";
+        cout << "4. Discussion Forum\n";
+        cout << "5. Log Out\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -761,9 +767,12 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
             myDocs(userList,docList);
             break;
         case 3:
-          explore(userList, docList);
+            myWallet();
             break;
         case 4:
+            discussionForum();
+            break;
+        case 5:
             cout << "Logging out...\n";
             cout<<"...Sucessfully Logged Out...\n\n\n\n\n";
             system("cls");
@@ -780,10 +789,11 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
-    cout << "2. Upload a New Document\n";
-    cout << "3. Go back\n";
+    cout << "2. Bought Documents\n";
+    cout << "3. Upload a New Document\n";
+    cout << "4. Go back\n";
 
-    char choice;
+    int choice;
     bool validch;
     do{
         validch=true;
@@ -809,6 +819,38 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     }while(!validch);
 }
 
+void myWallet() {
+    cout << "\n--- My Wallet ---\n";
+    cout << "1. Current Balance: $100\n";
+    cout << "2. Deposit Balance\n";
+    cout << "3. Withdraw Balance\n";
+    cout << "4. Take a Loan\n";
+
+    int choice;
+    cin >> choice;
+
+    switch (choice) {
+    case 1:
+        cout << "Your current balance is $100.\n";
+        break;
+    case 2:
+        cout << "Feature to deposit balance...\n";
+        break;
+    case 3:
+        cout << "Feature to withdraw balance...\n";
+        break;
+    case 4:
+        cout << "Feature to take a loan...\n";
+        break;
+    default:
+        cout << "Invalid choice. Please try again.\n";
+    }
+}
+
+void discussionForum() {
+    cout << "\n--- Discussion Forum ---\n";
+    cout << "Feature to start and join discussions will be here.\n";
+}
 
 void aboutUs(){
 cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners.";
@@ -1241,55 +1283,84 @@ void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedLis
         myDocs(userList, docList);
     }
 }
-void explore(UserProfileLinkedList& userList,DocumentLinkedList& docList){
-cout<<"Enter 1 to show all documents."<<endl;
-cout<<"Enter 2 to show your University."<<endl;
-cout<<"Enter 3 to show your Department."<<endl;
-cout<<"Enter 4 to show your Program."<<endl;
-cout<<"Enter 5 to show your Tag."<<endl;
-char exp_choice;
-bool validch;
-do{
-    validch = true;
-    cout<<"Enter your choice:";
-    cin>>exp_choice;
-    switch(exp_choice) {
-    case 1:
-        displayAllDocs(userList,docList);
-        break;
-    
-    case 2:
 
-        break;
-    case 3:
-        break;
-    case 4:
-        break;
-    case 5:
-        break;
-    default:
-        cout<<"Invalid choice.";
-        validch=false;
-        break;
-    }
-}while(!validch);
-}
-void displayAllDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
-    DocNode* temp = docList.tail;
 
-    // Traverse the list backward
-    while (temp != nullptr) {
-        // Call the display function for the current document
-        if(temp->doc.getUserID()!=current_user) {
-            temp->doc.displayDocumentInfo();
+void filterByUni(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    DocumentStack docStack; // Create a stack to store documents
 
-            // Print separator line
-            cout << "---------------------------------------" << std::endl;
+    UserNode* currentUserNode = userList.head;
+    while (currentUserNode != nullptr) {
+        if (currentUserNode->user.getUserID() == current_user) {
+            break; 
         }
-        // Move to the previous node
-        temp = temp->prev;
+        currentUserNode = currentUserNode->next;
+    }
+    // Traverse through the document linked list
+    DocNode* current = docList.head;
+    while (current != nullptr) {
+        if (current->doc.getUniName() == currentUserNode->user.getUniName()) {
+            docStack.push(current->doc); // Push documents belonging to the current user
+        }
+        current = current->next;
+    }
+
+    // Display documents from the stack
+    if (docStack.isEmpty()) {
+        cout << "No uploaded documents found for the current user.\n";
+    } else {
+        cout << "\n--- Uploaded Documents ---\n";
+        docStack.displayStack();
+    }
+
+    // Go back option
+    cout << "\nEnter 1 to go back: ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        myDocs(userList, docList); // Call myDocs again to go back
+    } else {
+        cout << "Invalid input. Returning to My Docs menu.\n";
+        myDocs(userList, docList);
     }
 }
-void filterByUniversity(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
 
-} 
+void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    DocumentStack docStack; // Create a stack to store documents
+
+    UserNode* currentUserNode = userList.head;
+    while (currentUserNode != nullptr) {
+        if (currentUserNode->user.getUserID() == current_user) {
+            break; 
+        }
+        currentUserNode = currentUserNode->next;
+    }
+    // Traverse through the document linked list
+    DocNode* current = docList.head;
+    while (current != nullptr) {
+        if ((current->doc.getUniName() == currentUserNode->user.getUniName()) && (current->doc.getSemester() == currentUserNode->user.getSemester()) ) {
+            docStack.push(current->doc); // Push documents belonging to the current user
+        }
+        current = current->next;
+    }
+
+    // Display documents from the stack
+    if (docStack.isEmpty()) {
+        cout << "No uploaded documents found for the current user.\n";
+    } else {
+        cout << "\n--- Uploaded Documents ---\n";
+        docStack.displayStack();
+    }
+
+    // Go back option
+    cout << "\nEnter 1 to go back: ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        myDocs(userList, docList); // Call myDocs again to go back
+    } else {
+        cout << "Invalid input. Returning to My Docs menu.\n";
+        myDocs(userList, docList);
+    }
+}

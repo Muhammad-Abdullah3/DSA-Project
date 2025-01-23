@@ -4,6 +4,8 @@
 #include<conio.h>
 #include<regex>
 #include<ctime>
+#include <windows.h>
+#include <commdlg.h> 
 using namespace std;
 
 static int current_user =1;// for storing the id of the current user present
@@ -225,15 +227,13 @@ private:
     string academic_year;
     string course_name;
     int semester;
-    bool isfree;
+
     string discription;
     string uploaded_date;
     string uni_name;
     string title;
     string file_path;
-    float price;
     vector<string> tags;
-    vector<string> access_keys;
     int downloads;
 
 
@@ -242,7 +242,7 @@ public:
     Documents() {
         document_id=Documents::doc_counts;
         downloads = 0;
-        Documents::doc_counts;
+        Documents::doc_counts++;
     }
 
     // Setters
@@ -269,10 +269,10 @@ public:
     void setSemester(int semester) {
         this->semester = semester;
     }
-
-    void setIsfree(bool isfree) {
-        this->isfree = isfree;
+    void setUniName(string uni_name) {
+        this->uni_name = uni_name;
     }
+
 
     void setDiscription(string discription) {
         this->discription = discription;
@@ -293,21 +293,12 @@ public:
         this->file_path = file_path;
     }
 
-    void setPrice(float price) {
-        this->price = price;
-    }
 
     void addTag(string tag) {
         this->tags.push_back(tag);
     }
 
-    // Generates 10 access keys
-    void generateAccessKeys() {
-        access_keys.clear(); // Clear any existing keys
-        for (int i = 0; i < 10; ++i) {
-            access_keys.push_back(generateRandomKey());
-        }
-    }
+
 
     // Increment Methods
 
@@ -343,14 +334,9 @@ public:
     string getFilePath()  {
         return file_path;
     }
-    float getPrice()  {
-        return price;
-    }
+
     vector<string> getTags()  {
         return tags;
-    }
-    vector<string> getAccessKeys()  {
-        return access_keys;
     }
 
 
@@ -361,19 +347,7 @@ public:
         return downloads;
     }
 
-    string generateRandomKey(int length = 12) {
-        srand(static_cast<unsigned int>(time(0)));
-        const string characters =
-            "abcdefghijklmnopqrstuvwxyz"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "0123456789"
-            "!@#$%^&*()_+-=";
-        string key;
-        for (int i = 0; i < length; ++i) {
-            key += characters[rand() % characters.size()];
-        }
-        return key;
-    }
+
 
     // Display Document Information
     void displayDocumentInfo() {
@@ -383,12 +357,10 @@ public:
         cout << "Academic Year: " << academic_year << endl;
         cout << "Course Name: " << course_name << endl;
         cout << "Semester: " << semester << endl;
-        cout << "Is Free: " << (isfree ? "Yes" : "No") << endl;
         cout << "Description: " << discription << endl;
         cout << "Uploaded Date: " << uploaded_date << endl;
         cout << "Title: " << title << endl;
         cout << "File Path: " << file_path << endl;
-        cout << "Price: " << price << endl;
         cout << "Downloads: " << downloads << endl;
 
     }
@@ -558,6 +530,10 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
 bool validDOB(string dob);
 bool isLeapYear(int year);
 int showAllCampus(string uni);
+void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedList& docList);
+void filterByUni(UserProfileLinkedList& userList, DocumentLinkedList& docList);
+void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList);
+void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docList);
 
 
 
@@ -747,15 +723,15 @@ void login(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
 }
 
 void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
+    system("cls");
     int choice;
     while (true) {
         cout << "\n=== DOC-SPOT Home Page ===\n";
         cout << "1. My Profile\n";
-        cout << "2. Explore\n";
         cout << "2. My Docs\n";
-        cout << "3. My Wallet\n";
-        cout << "4. Discussion Forum\n";
-        cout << "5. Log Out\n";
+        
+        cout << "3. Explore\n";
+        cout << "4. Log Out\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -767,12 +743,8 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
             myDocs(userList,docList);
             break;
         case 3:
-            myWallet();
             break;
         case 4:
-            discussionForum();
-            break;
-        case 5:
             cout << "Logging out...\n";
             cout<<"...Sucessfully Logged Out...\n\n\n\n\n";
             system("cls");
@@ -787,6 +759,7 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
 
 
 void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
+    system("cls");
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
     cout << "2. Bought Documents\n";
@@ -802,12 +775,14 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
         switch (choice) {
         case 1:
             cout << "Displaying uploaded documents...\n";
+            displayUploadedDocuments(userList,docList);
             break;
         case 2:
             cout << "Displaying downloaded documents...\n";
             break;
         case 3:
             cout << "Feature to upload a new document...\n";
+            uploadDocument(userList,docList);
             break;
         case 4:
             displayHomePage(userList,docList);
@@ -819,38 +794,9 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     }while(!validch);
 }
 
-void myWallet() {
-    cout << "\n--- My Wallet ---\n";
-    cout << "1. Current Balance: $100\n";
-    cout << "2. Deposit Balance\n";
-    cout << "3. Withdraw Balance\n";
-    cout << "4. Take a Loan\n";
 
-    int choice;
-    cin >> choice;
 
-    switch (choice) {
-    case 1:
-        cout << "Your current balance is $100.\n";
-        break;
-    case 2:
-        cout << "Feature to deposit balance...\n";
-        break;
-    case 3:
-        cout << "Feature to withdraw balance...\n";
-        break;
-    case 4:
-        cout << "Feature to take a loan...\n";
-        break;
-    default:
-        cout << "Invalid choice. Please try again.\n";
-    }
-}
 
-void discussionForum() {
-    cout << "\n--- Discussion Forum ---\n";
-    cout << "Feature to start and join discussions will be here.\n";
-}
 
 void aboutUs(){
 cout<<"Doc-Spot is a document sharing platform that enables students of different university from different Academic Backgrounds having different interests to come together and help each other in their Academic journey and solve many of the problems, they face. Doc-Spot also encourges the students who are still struggling and learning by producing a stream of income with the help of documents they have shared on the platform. Here, on this platform, a student has the power to either giveaway their work freely or at some minimal cost, which will help them by giving them a steady means of income without extra effort. The only thing you need to Register yoursekf on Doc-Spot is your University E-mail, a will to achieve something and connect with fellow learners.";
@@ -918,8 +864,9 @@ void completeProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList
     }
     if(temp->user.getDOB()=="NULL"){
         string DOB;
-        bool checkDOB=true;
-        do {        
+        bool checkDOB;
+        do {      
+            checkDOB=true;
             cin.ignore();
             cout << "Enter your DOB in \'DD-MM-YYYY\' Format: ";
             getline(cin, DOB);
@@ -964,12 +911,10 @@ void completeProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList
             goto campuscount;
         }
     }
-    if(temp->user.getSemester()==-1){
         int semester;
         cout<<"Enter your Semester: ";
         cin>>semester;
         temp->user.setSemester(semester);
-    }
     cout<<"Press any key to go Home page.";
     cin.get();
     displayHomePage(userList,docList);
@@ -1363,4 +1308,162 @@ void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docLi
         cout << "Invalid input. Returning to My Docs menu.\n";
         myDocs(userList, docList);
     }
+}
+
+
+
+void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    // File path variable
+    char szFileName[MAX_PATH] = ""; // Buffer for the selected file name
+
+    // Set up the OPENFILENAME struct
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = NULL; // Owner window handle
+    ofn.lpstrFilter = "All Files (*.*)\0*.*\0"; // Filter for all files
+    ofn.lpstrFile = szFileName;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrDefExt = NULL;
+
+    // Open file dialog
+    if (GetOpenFileName(&ofn)) {
+        cout << "Selected file: " << szFileName << endl;
+    } else {
+        DWORD error = CommDlgExtendedError();
+        if (error != 0) {
+            cout << "An error occurred. Error code: " << error << endl;
+        } else {
+            cout << "No file selected or dialog canceled." << endl;
+        }
+        return;
+    }
+
+    string file_path=szFileName; // Convert file path to string
+
+    // Create a new Documents object
+    Documents doc;
+
+    // Set the file path
+    doc.setFilePath(file_path);
+
+    // Variables for user input
+    string instructor, academic_year, course_name, description, uni_name, title, tags_input;
+    int semester;
+    vector<string> tags;
+
+    bool validInput; // Used for validation loops
+
+    // Instructor validation
+    do {
+        cin.ignore();
+        validInput = true;
+        cout << "Enter instructor name: ";
+        getline(cin, instructor);
+
+        for (int i = 0; i < instructor.length(); i++) {
+            char c = instructor[i];
+            if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == ' ')) {
+                cout << "Invalid instructor name. Only alphabets and spaces are allowed." << endl;
+                validInput = false;
+                break;
+            }
+        }
+    } while (!validInput);
+    doc.setInstructor(instructor);
+
+    // Academic year validation
+    do {
+        validInput = true;
+        cout << "Enter academic year (e.g., 2023): ";
+        cin.ignore();
+        getline(cin, academic_year);
+
+        if (academic_year.length() != 4) {
+            cout << "Academic year must be a 4-digit number." << endl;
+            validInput = false;
+        } else {
+            for (int i = 0; i < academic_year.length(); i++) {
+                if (!(academic_year[i] >= '0' && academic_year[i] <= '9')) {
+                    cout << "Invalid academic year. Only digits are allowed." << endl;
+                    validInput = false;
+                    break;
+                }
+            }
+        }
+    } while (!validInput);
+    doc.setAcademic_year(academic_year);
+
+    // Course name
+    cout << "Enter course name: ";
+    getline(cin, course_name);
+    doc.setCourse_name(course_name);
+
+    // Semester validation
+    do {
+        cout << "Enter semester (1 or 2): ";
+        cin >> semester;
+
+        if (semester == 1 || semester == 2) {
+            validInput = true;
+        } else {
+            cout << "Invalid semester. Please enter 1 or 2." << endl;
+            validInput = false;
+        }
+    } while (!validInput);
+    cin.ignore(); // Clear newline character left in the input buffer
+    doc.setSemester(semester);
+
+    // Description
+    cout << "Enter description: ";
+    getline(cin, description);
+    doc.setDiscription(description);
+
+    doc.setUploadedDate();
+
+    // University name
+    cout << "Enter university name: ";
+    getline(cin, uni_name);
+    doc.setUniName(uni_name);
+
+    // Title validation
+    do {
+        validInput = true;
+        cout << "Enter document title: ";
+        getline(cin, title);
+
+        if (title.empty()) {
+            cout << "Title cannot be empty. Please enter a valid title." << endl;
+            validInput = false;
+        }
+    } while (!validInput);
+    doc.setTitle(title);
+
+    // Tags input
+    cout << "Enter tags (comma-separated): ";
+    getline(cin, tags_input);
+
+    string tag = "";
+    for (int i = 0; i < tags_input.length(); i++) {
+        if (tags_input[i] == ',' || i == tags_input.length() - 1) {
+            if (i == tags_input.length() - 1 && tags_input[i] != ',') tag += tags_input[i]; // Add the last char
+            tags.push_back(tag);
+            tag = "";
+        } else if (tags_input[i] != ' ') {
+            tag += tags_input[i];
+        }
+    }
+
+    for (int i = 0; i < tags.size(); i++) {
+        doc.addTag(tags[i]);
+    }
+
+    // Set user ID to current_user
+    extern int current_user; // Assuming current_user is defined globally
+    doc.setUser_id(current_user);
+
+    // Document details confirmation
+    cout << "\nDocument successfully created with the following details:\n";
+    doc.displayDocumentInfo();
 }

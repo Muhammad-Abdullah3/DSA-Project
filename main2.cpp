@@ -763,12 +763,6 @@ void displayHomePage(UserProfileLinkedList& userList,DocumentLinkedList& docList
             myDocs(userList,docList);
             break;
         case 3:
-            myWallet();
-            break;
-        case 4:
-            discussionForum();
-            break;
-        case 5:
             cout << "Logging out...\n";
             cout<<"...Sucessfully Logged Out...\n\n\n\n\n";
             system("cls");
