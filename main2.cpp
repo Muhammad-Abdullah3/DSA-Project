@@ -6,6 +6,7 @@
 #include<ctime>
 #include <windows.h>
 #include <commdlg.h> 
+#include <fstream>
 using namespace std;
 
 static int current_user =1;// for storing the id of the current user present
@@ -163,8 +164,8 @@ public:
     }
 };
 
-vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT","Punjab University"};
-vector<string> Universities::domains = {"students.riphah", "fast", "nust","au","uet","umt","pucit"};
+vector<string> Universities::uni_names = {"Riphah International University", "Fast University", "NUST","Air University","UET","UMT"};
+vector<string> Universities::domains = {"students.riphah", "fast", "nust","au","uet","umt"};
 vector<vector<string>> Universities::campus = {{"Raiwind Lahore","Gulberg Lahore","Islamabad","Faislabad"}, {"Lahore","Islamabad","Peshawar","Karachi"}, {"Islamabad"},{"Rawalpindi"},{"Peshawar","Lahore","Islamabad","Karachi"},{"Lahore"}};
 
 // Doubly Linked List UserNode Structure for User Profile objects
@@ -234,14 +235,12 @@ private:
     string title;
     string file_path;
     vector<string> tags;
-    int downloads;
 
 
 public:
     static int doc_counts;
     Documents() {
         document_id=Documents::doc_counts;
-        downloads = 0;
         Documents::doc_counts++;
     }
 
@@ -302,9 +301,7 @@ public:
 
     // Increment Methods
 
-    void addDownload() {
-        downloads++;
-    }
+
 
     // Getters
     int getDocumentID()  {
@@ -343,26 +340,38 @@ public:
     string getUploadedDate()  {
         return uploaded_date;
     }
-    int getDownloads() {
-        return downloads;
-    }
+
 
 
 
     // Display Document Information
     void displayDocumentInfo() {
-        cout << "Document ID: " << document_id << endl;
-        cout << "User ID: " << user_id << endl;
-        cout << "Instructor: " << instructor << endl;
-        cout << "Academic Year: " << academic_year << endl;
-        cout << "Course Name: " << course_name << endl;
-        cout << "Semester: " << semester << endl;
-        cout << "Description: " << discription << endl;
-        cout << "Uploaded Date: " << uploaded_date << endl;
         cout << "Title: " << title << endl;
-        cout << "File Path: " << file_path << endl;
-        cout << "Downloads: " << downloads << endl;
-
+        cout << "Description: " << endl;
+        int LINE_WIDTH = 80; // Adjust this based on your terminal width
+        int start = 0;
+        while (start < discription.size()) {
+        int end = start + LINE_WIDTH;
+        if (end < discription.size()) {
+            // Look for the last space before the end to avoid cutting words
+            end = discription.find_last_of(' ', end);
+            if (end == std::string::npos || end <= start) {
+                end = start + LINE_WIDTH; // No spaces, force break
+            }
+        }
+        cout << discription.substr(start, end - start) << endl;
+        start = end + 1; 
+    }
+        cout << "Instructor: " << instructor;
+        cout << "\t\tAcademic Year: " << academic_year;
+        cout << "\t\tCourse Name: " << course_name;
+        cout << "\t\tSemester: " << semester << endl;
+        cout << "Uploaded Date: " << uploaded_date<<endl;
+        cout << "Tags: ";
+        for(int i=0;i<tags.size();i++) {
+            cout <<"#"<<tags[i] << " ";
+        }
+        cout<<endl;
     }
 };
 int Documents::doc_counts=1;
@@ -429,10 +438,9 @@ struct StackDocNode {
 };
 
 class DocumentStack {
-private:
+public:
     StackDocNode* top; // Pointer to the top of the stack
 
-public:
     DocumentStack() {
         top = nullptr; // Initialize stack as empty
     }
@@ -477,18 +485,6 @@ public:
         return top == nullptr;
     }
 
-    // Display all documents in the stack
-    void displayStack() {
-        if (isEmpty()) {
-            cout << "The stack is empty." << endl;
-            return;
-        }
-        while (top != nullptr) {
-            Documents doc = pop();
-            doc.displayDocumentInfo();
-            cout << "----------------------------" << endl;
-        }
-    }
 };
 
 
@@ -535,6 +531,8 @@ void explore(UserProfileLinkedList& userList, DocumentLinkedList& docList);
 void filterByTags(UserProfileLinkedList& userList, DocumentLinkedList& docList);
 
 void showDocuments(UserProfileLinkedList& userList, DocumentLinkedList& docList);
+
+void downloadDocument(Documents doc);
 
 
 
@@ -643,7 +641,8 @@ void signupConsole(UserProfileLinkedList& userList,DocumentLinkedList& docList) 
 }
 
 void displayFirstPage(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
-    int choice;
+    system("cls");
+    char choice;
 
     cout << "\n=== Welcome to DOC-SPOT ===\n";
     cout << "1. Login\n";
@@ -653,13 +652,13 @@ void displayFirstPage(UserProfileLinkedList& userList,DocumentLinkedList& docLis
     cout << "Enter your choice: ";
     cin >> choice;
     switch (choice) {
-    case 1:
+    case '1':
         login(userList,docList);
         break;
-    case 2:
+    case '2':
         signupConsole(userList,docList);
         break;
-    case 3:
+    case '3':
     int ch;
     bool validch;
         aboutUs();
@@ -694,15 +693,16 @@ void login(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     system("cls");
     cout << "\n--- Login ---\n";
     cout << "Enter University Email: ";
-    cin.ignore();
+
     getline(cin,em);
     if(!(validateEmailLogin(em))) {
         cout<<"Please enter your official university Email.Try Again";
         login(userList,docList);
     }
+
     cout << "Enter Password: ";
-    cin.ignore();
-     getline(cin,pass); 
+    getline(cin,pass); 
+    
     bool checkEmail = false;
     UserNode* temp = userList.head;
     while (temp!=nullptr) {
@@ -712,14 +712,22 @@ void login(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
         }
         temp = temp->next;
     }
-    if(temp->user.getPassword()==pass && checkEmail){    
+    if(checkEmail&&temp->user.getPassword()==pass){    
     cout << "Login successful!\n";
     current_user= temp->user.getUserID();
     displayHomePage(userList,docList); 
-    }
-    else{
+    }else{
         cout<<"Incorrect Email OR Password."<<endl;
-        login(userList,docList);
+        cout<<"Enter 1 to try again and any other key to go back to homepage";
+        char choice;
+        cin>>choice;
+        switch(choice) {
+            case '1':
+            login(userList,docList);
+            break;
+            default:
+            displayFirstPage(userList,docList);
+        }
     }
 }
 
@@ -763,29 +771,27 @@ void myDocs(UserProfileLinkedList& userList,DocumentLinkedList& docList) {
     system("cls");
     cout << "\n--- My Docs ---\n";
     cout << "1. Uploaded Documents\n";
-    cout << "2. Bought Documents\n";
-    cout << "3. Upload a New Document\n";
-    cout << "4. Go back\n";
+    cout << "2. Upload a New Document\n";
+    cout << "3. Go back\n";
 
-    int choice;
+    char choice;
     bool validch;
     do{
         validch=true;
         cout<<"Enter your Choice:";
         cin >> choice;
         switch (choice) {
-        case 1:
+        case '1':
             cout << "Displaying uploaded documents...\n";
             displayUploadedDocuments(userList,docList);
             break;
-        case 2:
-            cout << "Displaying downloaded documents...\n";
-            break;
-        case 3:
-            cout << "Feature to upload a new document...\n";
+
+        case '2':
+            system("cls");
+            cout << "Uploading a new document...\n";
             uploadDocument(userList,docList);
             break;
-        case 4:
+        case '3':
             displayHomePage(userList,docList);
             break;
         default:
@@ -815,12 +821,10 @@ void signUp(UserProfileLinkedList& userList, string& name, string& email, string
     current_user = user.getUserID(); // Set the current user ID
     UserProfile::user_count++; // Increment user count
 
-    cout << "User added with ID: " << user.getUserID() << ", Name: " << user.getUserName() << endl;
-
 }
 
 bool validateEmailLogin(string email) {
-    string basePattern = R"(^[\w\.-]+@\.)";
+    string basePattern = R"(^[\w\.-]+@)";
     string suffix = R"(\.edu\.pk$)";
     
     for (auto domain : Universities::domains) {
@@ -881,7 +885,7 @@ void completeProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList
     if(temp->user.getDepartment()=="NULL"){
         string department;
         cin.ignore();
-        cout << "Enter your Department";
+        cout << "Enter your Department: ";
         getline(cin, department);
         temp->user.setDepartment(department);
     }
@@ -889,7 +893,7 @@ void completeProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList
     if(temp->user.getProgram()=="NULL"){
         string program;
         cin.ignore();
-        cout << "Enter your Program";
+        cout << "Enter your Program: ";
         getline(cin, program);
         temp->user.setProgram(program);
     }
@@ -932,7 +936,8 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
                 system("cls");
                 int ch;
                 bool validChoice;
-                cout<<current->user.getUserName()<<endl;
+                cout<<"Name:"<<current->user.getUserName()<<endl;
+                cout<<endl;
                 cout<<"Do you want to edit your Name? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
@@ -966,8 +971,9 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
                         cout<<"Invalid choice. Please enter 1 for yes and 0 for No."<<endl;
                     }
                 }while(!validChoice);
-
-                cout<<current->user.getDOB()<<endl;
+                cout<<endl;
+                cout<<"Date of Birth"<<current->user.getDOB()<<endl;
+                cout<<endl;
                 cout<<"Do you want to edit your Date of Birth? Press 1 for yes and 0 for No:";
                 cin>>ch;
                 do{
@@ -997,7 +1003,7 @@ void editProfile(UserProfileLinkedList& userList,DocumentLinkedList& docList,Use
                     }
                 }while(!validChoice);
 
-
+                
                 cout<<current->user.getAddress()<<endl;
                 cout<<"Do you want to edit your Address? Press 1 for yes and 0 for No:";
                 cin>>ch;
@@ -1192,12 +1198,13 @@ int showAllCampus(string uni) {
     cout << "Campus Locations: "<< endl;
     int i=0;
     for(;i<Universities::campus.at(index).size();i++) {
-        cout <<i<<". "<< Universities::campus.at(index).at(i) << endl;
+        cout <<i+1<<". "<< Universities::campus.at(index).at(i) << endl;
     }
     return index;
 }
 
 void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
+    system("cls");
     DocumentStack docStack; // Create a stack to store documents
 
     // Traverse through the document linked list
@@ -1208,27 +1215,42 @@ void displayUploadedDocuments(UserProfileLinkedList& userList, DocumentLinkedLis
         }
         current = current->next;
     }
+    int count=1;
+    Documents doc_arr[5];
 
     // Display documents from the stack
     if (docStack.isEmpty()) {
         cout << "No uploaded documents found for the current user.\n";
     } else {
-        cout << "\n--- Uploaded Documents ---\n";
-        docStack.displayStack();
-    }
-
-    // Go back option
-    cout << "\nEnter 1 to go back to Home Page. ";
-    cout << "\nEnter any to go back to explore page again. ";
-    cout<<"\nEnter your choice: ";
-    char choice;
-    cin >> choice;
-
-    if (choice == '1') {
-        displayHomePage(userList, docList);
-    } else {
-        cout << "Returning to My Docs menu.\n";
-        explore(userList, docList);
+        while (docStack.top!= nullptr) {
+            Documents doc = docStack.pop();
+            cout<<count<<".";
+            doc.displayDocumentInfo();
+            doc_arr[count-1]=doc;
+            cout << "----------------------------" << endl;
+            count++;
+            if(count>0&&count<=5) {
+                cout << "\nEnter 1 to go to next Page";
+                cout << "\nEnter 2 to go to Explore Page";
+                cout << "\nEnter any other key to go back to Home Page";
+                cout<<"\nEnter your choice: ";
+                char choice;
+                cin >> choice;
+                if (choice=='2'){ 
+                    count=0;
+                }
+                else  if (choice=='2'){
+                    explore(userList,docList);
+                    break;
+                    
+                }
+                else {
+                    displayHomePage(userList,docList);
+                    break;
+                }
+            }
+            system("cls");
+        }
     }
 }
 
@@ -1246,34 +1268,78 @@ void filterByUni(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
     // Traverse through the document linked list
     DocNode* current = docList.head;
     while (current != nullptr) {
-        if (current->doc.getUniName() == currentUserNode->user.getUniName()) {
+        if (current->doc.getUniName() == currentUserNode->user.getUniName()&&current->doc.getUserID()!=current_user) {
             docStack.push(current->doc); // Push documents belonging to the current user
         }
         current = current->next;
     }
-
+    int count=1;
+    Documents doc_arr[5];
     // Display documents from the stack
     if (docStack.isEmpty()) {
-        cout << "No uploaded documents found for the current user.\n";
+        cout << "No documents found\n";
     } else {
-        cout << "\n--- Uploaded Documents ---\n";
-        docStack.displayStack();
-    }
+        while (docStack.top!= nullptr) {
+            Documents doc = docStack.pop();
+            cout<<count<<".";
+            doc.displayDocumentInfo();
+            doc_arr[count-1]=doc;
+            cout << "----------------------------" << endl;
+            count++;
+            if(count>0&&count<=5) {
+                cout << "\nEnter 1 to download a document";
+                cout << "\nEnter 2 to go to next Page";
+                cout << "\nEnter 3 to go to Explore Page";
+                cout << "\nEnter any other key to go back to Home Page";
+                cout<<"\nEnter your choice: ";
+                char choice;
+                cin >> choice;
 
-    // Go back option
-    cout << "\nEnter 1 to go back to Home Page. ";
-    cout << "\nEnter any to go back to my docs page again. ";
-    cout<<"\nEnter your choice: ";
-    char choice;
-    cin >> choice;
+                if (choice == '1') {
+                    cout<<"Select a Document to Download ";
+                    cout<<"Enter between 1 to 5 to download one document: ";
+                    char ch;
+                    cin >> ch;
+                    switch(ch) {
+                        case '1':
+                        downloadDocument(doc_arr[0]);
+                        break;
+                        case '2':
+                        downloadDocument(doc_arr[1]);
+                        break;
+                        case '3':
+                        downloadDocument(doc_arr[2]);
+                        break;
+                        case '4':
+                        downloadDocument(doc_arr[3]);
+                        break;
+                        case '5':
+                        downloadDocument(doc_arr[4]);
+                        break;
+                        default:
+                        cout<<"Invalid Choice. Going back to Explore Page";
+                        explore(userList,docList);
 
-    if (choice == '1') {
-        displayHomePage(userList, docList);
-    } else {
-        cout << "Returning to My Docs menu.\n";
-        myDocs(userList, docList);
+                    }
+                    break;
+                } else  if (choice=='2'){
+                    
+                    count=0;
+                }
+                else  if (choice=='3'){
+                    explore(userList,docList);
+                    break;
+                    
+                }
+                else {
+                    displayHomePage(userList,docList);
+                    break;
+                }
+            }
+        }
     }
 }
+
 
 void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docList) {
     DocumentStack docStack; // Create a stack to store documents
@@ -1288,32 +1354,74 @@ void filterBySemester(UserProfileLinkedList& userList, DocumentLinkedList& docLi
     // Traverse through the document linked list
     DocNode* current = docList.head;
     while (current != nullptr) {
-        if ((current->doc.getUniName() == currentUserNode->user.getUniName()) && (current->doc.getSemester() == currentUserNode->user.getSemester()) ) {
+        if (current->doc.getSemester() == currentUserNode->user.getSemester()&&current->doc.getUserID()!=current_user) {
             docStack.push(current->doc); // Push documents belonging to the current user
         }
         current = current->next;
     }
-
-    // Display documents from the stack
-    if (docStack.isEmpty()) {
-        cout << "No uploaded documents found for the current user.\n";
+    int count=1;
+    Documents doc_arr[5];
+   if (docStack.isEmpty()) {
+        cout << "No documents found\n";
     } else {
-        cout << "\n--- Uploaded Documents ---\n";
-        docStack.displayStack();
-    }
+        while (docStack.top!= nullptr) {
+            Documents doc = docStack.pop();
+            cout<<count<<".";
+            doc.displayDocumentInfo();
+            doc_arr[count-1]=doc;
+            cout << "----------------------------" << endl;
+            count++;
+            if(count>0&&count<=5) {
+                cout << "\nEnter 1 to download a document";
+                cout << "\nEnter 2 to go to next Page";
+                cout << "\nEnter 3 to go to Explore Page";
+                cout << "\nEnter any other key to go back to Home Page";
+                cout<<"\nEnter your choice: ";
+                char choice;
+                cin >> choice;
 
-    // Go back option
-    cout << "\nEnter 1 to go back to Home Page. ";
-    cout << "\nEnter any to go back to explore page again. ";
-    cout<<"\nEnter your choice: ";
-    char choice;
-    cin >> choice;
+                if (choice == '1') {
+                    cout<<"Select a Document to Download ";
+                    cout<<"Enter between 1 to 5 to download one document: ";
+                    char ch;
+                    cin >> ch;
+                    switch(ch) {
+                        case '1':
+                        downloadDocument(doc_arr[0]);
+                        break;
+                        case '2':
+                        downloadDocument(doc_arr[1]);
+                        break;
+                        case '3':
+                        downloadDocument(doc_arr[2]);
+                        break;
+                        case '4':
+                        downloadDocument(doc_arr[3]);
+                        break;
+                        case '5':
+                        downloadDocument(doc_arr[4]);
+                        break;
+                        default:
+                        cout<<"Invalid Choice. Going back to Explore Page";
+                        explore(userList,docList);
 
-    if (choice == '1') {
-        displayHomePage(userList, docList);
-    } else {
-        cout << "Returning to My Docs menu.\n";
-        explore(userList, docList);
+                    }
+                    break;
+                } else  if (choice=='2'){
+                    
+                    count=0;
+                }
+                else  if (choice=='3'){
+                    explore(userList,docList);
+                    break;
+                    
+                }
+                else {
+                    displayHomePage(userList,docList);
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -1364,7 +1472,6 @@ void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList
 
     // Instructor validation
     do {
-        cin.ignore();
         validInput = true;
         cout << "Enter instructor name: ";
         getline(cin, instructor);
@@ -1383,8 +1490,9 @@ void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList
     // Academic year validation
     do {
         validInput = true;
+        cin.ignore('\n');
         cout << "Enter academic year (e.g., 2023): ";
-        cin.ignore();
+
         getline(cin, academic_year);
 
         if (academic_year.length() != 4) {
@@ -1409,30 +1517,34 @@ void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList
 
     // Semester validation
     do {
-        cout << "Enter semester (1 or 2): ";
+        validInput=true;
+        cout << "Enter semester (1 - 10): ";
         cin >> semester;
 
-        if (semester == 1 || semester == 2) {
-            validInput = true;
-        } else {
-            cout << "Invalid semester. Please enter 1 or 2." << endl;
-            validInput = false;
-        }
+        if (cin.fail() || semester < 1|| semester > 10) {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "Invalid input. Please enter a valid choice between" <<1<< "-" << 10<< "): ";
+                validInput=false;
+            }
+
     } while (!validInput);
     cin.ignore(); // Clear newline character left in the input buffer
     doc.setSemester(semester);
-
+    UserNode* temp = userList.head;
+    while (temp!=nullptr) {
+        if (temp->user.getUserID() == current_user) {
+            break;
+        }
+        temp = temp->next;
+    }
+    doc.setUniName(temp->user.getUniName());
     // Description
     cout << "Enter description: ";
     getline(cin, description);
     doc.setDiscription(description);
 
     doc.setUploadedDate();
-
-    // University name
-    cout << "Enter university name: ";
-    getline(cin, uni_name);
-    doc.setUniName(uni_name);
 
     // Title validation
     do {
@@ -1496,11 +1608,11 @@ void uploadDocument(UserProfileLinkedList& userList, DocumentLinkedList& docList
 void explore (UserProfileLinkedList& userList, DocumentLinkedList& docList) {
     system("cls");
     cout << "-------------Explore Documents-------------\n";
-    cout<<"1. Show All Documents.";
-    cout<<"2. Filter your University Documents.";
-    cout<<"3. Filter your Semester Documents.";
-    cout<<"4. Filter Documents By Tags";
-    cout<<"5. Go to Home Page.";
+    cout<<"1. Show All Documents."<<endl;
+    cout<<"2. Filter your University Documents."<<endl;
+    cout<<"3. Filter your Semester Documents."<<endl;
+    cout<<"4. Filter Documents By Tags"<<endl;
+    cout<<"5. Go to Home Page."<<endl;
 
     char choice; // Initialize the choice variable
     bool checkChoice;
@@ -1515,7 +1627,7 @@ do {
 
     // Validate the user's choice
     if (choice < '1' || choice > '5') {
-        cout << "Invalid choice! Please enter a valid option (1-7)." << endl;
+        cout << "Invalid choice! Please enter a valid option (1-5)." << endl;
         checkChoice = false; // Invalid choice, loop again
     } else {
         // Handle valid choices
@@ -1554,26 +1666,69 @@ void showDocuments(UserProfileLinkedList& userList, DocumentLinkedList& docList)
         current = current->next;
     }
 
-    // Display documents from the stack
+    int count=1;
+    Documents doc_arr[5];
     if (docStack.isEmpty()) {
-        cout << "No uploaded documents found for the current user.\n";
+        cout << "No documents found\n";
     } else {
-        cout << "\n--- Documents ---\n";
-        docStack.displayStack();
-    }
+        while (docStack.top!= nullptr) {
+            Documents doc = docStack.pop();
+            cout<<count<<".";
+            doc.displayDocumentInfo();
+            doc_arr[count-1]=doc;
+            cout << "----------------------------" << endl;
+            count++;
+            if(count>0&&count<=5) {
+                cout << "\nEnter 1 to download a document";
+                cout << "\nEnter 2 to go to next Page";
+                cout << "\nEnter 3 to go to Explore Page";
+                cout << "\nEnter any other key to go back to Home Page";
+                cout<<"\nEnter your choice: ";
+                char choice;
+                cin >> choice;
 
-    // Go back option
-    cout << "\nEnter 1 to go back to Home Page. ";
-    cout << "\nEnter any to go back to explore page again. ";
-    cout<<"\nEnter your choice: ";
-    char choice;
-    cin >> choice;
+                if (choice == '1') {
+                    cout<<"Select a Document to Download ";
+                    cout<<"Enter between 1 to 5 to download one document: ";
+                    char ch;
+                    cin >> ch;
+                    switch(ch) {
+                        case '1':
+                        downloadDocument(doc_arr[0]);
+                        break;
+                        case '2':
+                        downloadDocument(doc_arr[1]);
+                        break;
+                        case '3':
+                        downloadDocument(doc_arr[2]);
+                        break;
+                        case '4':
+                        downloadDocument(doc_arr[3]);
+                        break;
+                        case '5':
+                        downloadDocument(doc_arr[4]);
+                        break;
+                        default:
+                        cout<<"Invalid Choice. Going back to Explore Page";
+                        explore(userList,docList);
 
-    if (choice == '1') {
-        displayHomePage(userList, docList);
-    } else {
-        cout << "Returning to My Docs menu.\n";
-        explore(userList, docList);
+                    }
+                    break;
+                } else  if (choice=='2'){
+                    
+                    count=0;
+                }
+                else  if (choice=='3'){
+                    explore(userList,docList);
+                    break;
+                    
+                }
+                else {
+                    displayHomePage(userList,docList);
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -1607,27 +1762,137 @@ void filterByTags(UserProfileLinkedList & userList, DocumentLinkedList& docList)
 
         current = current->next; // Move to the next document node
     }
+    int count=1;
+    Documents doc_arr[5];
 
-    // Display documents from the stack
-    if (!documentFound) {
-        cout << "No documents found with the specified tag.\n";
+    if (docStack.isEmpty()) {
+        cout << "No documents found\n";
     } else {
-        cout << "\n--- Documents Matching the Tag ---\n";
-        docStack.displayStack();
-    }
+        while (docStack.top!= nullptr) {
+            Documents doc = docStack.pop();
+            cout<<count<<".";
+            doc.displayDocumentInfo();
+            doc_arr[count-1]=doc;
+            cout << "----------------------------" << endl;
+            count++;
+            if(count>0&&count<=5) {
+                cout << "\nEnter 1 to download a document";
+                cout << "\nEnter 2 to go to next Page";
+                cout << "\nEnter 3 to go to Explore Page";
+                cout << "\nEnter any other key to go back to Home Page";
+                cout<<"\nEnter your choice: ";
+                char choice;
+                cin >> choice;
 
-    // Go back option
-   cout << "\nEnter 1 to go back to Home Page. ";
-    cout << "\nEnter any to go back to explore page again. ";
-    cout<<"\nEnter your choice: ";
-    char choice;
-    cin >> choice;
+                if (choice == '1') {
+                    cout<<"Select a Document to Download ";
+                    cout<<"Enter between 1 to 5 to download one document: ";
+                    char ch;
+                    cin >> ch;
+                    switch(ch) {
+                        case '1':
+                        downloadDocument(doc_arr[0]);
+                        break;
+                        case '2':
+                        downloadDocument(doc_arr[1]);
+                        break;
+                        case '3':
+                        downloadDocument(doc_arr[2]);
+                        break;
+                        case '4':
+                        downloadDocument(doc_arr[3]);
+                        break;
+                        case '5':
+                        downloadDocument(doc_arr[4]);
+                        break;
+                        default:
+                        cout<<"Invalid Choice. Going back to Explore Page";
+                        explore(userList,docList);
 
-    if (choice == '1') {
-        displayHomePage(userList, docList);
-    } else {
-        cout << "Returning to My Docs menu.\n";
-        explore(userList, docList);
+                    }
+                    break;
+                } else  if (choice=='2'){
+                    
+                    count=0;
+                }
+                else  if (choice=='3'){
+                    explore(userList,docList);
+                    break;
+                    
+                }
+                else {
+                    displayHomePage(userList,docList);
+                    break;
+                }
+            }
+        }
     }
 }
 
+void downloadDocument(Documents doc) {
+    // Get source file path and default title from the document
+    string sourceFilePath = doc.getFilePath();
+    string defaultTitle = doc.getTitle();
+
+    // Extract the file extension from the source file path
+    string fileExtension;
+    size_t dotPos = sourceFilePath.find_last_of('.');
+    if (dotPos != string::npos) {
+        fileExtension = sourceFilePath.substr(dotPos); // Extract extension, including the dot
+    }
+
+    // Append the extension to the default title if it doesn't already have one
+    if (defaultTitle.find('.') == string::npos && !fileExtension.empty()) {
+        defaultTitle += fileExtension;
+    }
+
+    // File path variable for destination
+    char szFileName[MAX_PATH] = ""; // Buffer for the destination file name
+    strncpy(szFileName, defaultTitle.c_str(), MAX_PATH - 1); // Set default name
+    szFileName[MAX_PATH - 1] = '\0'; // Ensure null termination
+
+    // Set up the OPENFILENAME struct
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(OPENFILENAME));
+    ofn.lStructSize = sizeof(OPENFILENAME);
+    ofn.hwndOwner = NULL; // Owner window handle
+    ofn.lpstrFilter = "All Files (*.*)\0*.*\0"; // Filter for all files
+    ofn.lpstrFile = szFileName;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT; // Overwrite prompt if file exists
+    ofn.lpstrDefExt = NULL;
+
+    // Show the "Save As" dialog box
+    if (GetSaveFileName(&ofn)) {
+        cout << "File will be saved to: " << szFileName << endl;
+
+        // Simulate file download by copying the source file to the selected destination
+        ifstream sourceFile(sourceFilePath, ios::binary); // Open source file
+        if (!sourceFile) {
+            cout << "Error: Could not open source file: " << sourceFilePath << endl;
+            return;
+        }
+
+        ofstream destFile(szFileName, ios::binary); // Open destination file
+        if (!destFile) {
+            cout << "Error: Could not create destination file: " << szFileName << endl;
+            return;
+        }
+
+        // Copy file contents
+        destFile << sourceFile.rdbuf();
+
+        // Close the files
+        sourceFile.close();
+        destFile.close();
+
+        cout << "File successfully saved to " << szFileName << endl;
+    } else {
+        DWORD error = CommDlgExtendedError();
+        if (error != 0) {
+            cout << "An error occurred. Error code: " << error << endl;
+        } else {
+            cout << "Save operation canceled." << endl;
+        }
+    }
+}

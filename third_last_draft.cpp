@@ -37,7 +37,7 @@ class UserProfile{
         program="NULL";
         uni_name="NULL";
         campus_location="NULL";
-        int semester = -1;
+        int semester =-1;
         is_profile_complete = false;
     }
     // Constructor for SignUp function
